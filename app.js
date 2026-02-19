@@ -1,6 +1,9 @@
 let currentSubject = '';
 let currentGrade = 2;
 let currentTopic = '';
+let difficulty = 'medium';
+let totalQuestions = 10;
+let questionCount = 0;
 let score = 0;
 let attempts = 0;
 let currentAnswer = '';
@@ -37,6 +40,14 @@ document.getElementById('grade').addEventListener('change', (e) => {
     } else if (document.getElementById('englishOptions').style.display === 'block') {
         showTopicMenu('english');
     }
+});
+
+document.getElementById('difficulty').addEventListener('change', (e) => {
+    difficulty = e.target.value;
+});
+
+document.getElementById('questionCount').addEventListener('change', (e) => {
+    totalQuestions = parseInt(e.target.value);
 });
 
 function startSubject(subject) {
@@ -89,9 +100,13 @@ function getEnglishColor(topic) {
 
 function startTopic(topic) {
     currentTopic = topic;
+    questionCount = 0;
+    score = 0;
+    attempts = 0;
     document.getElementById('mathOptions').style.display = 'none';
     document.getElementById('englishOptions').style.display = 'none';
     document.getElementById('questionArea').style.display = 'block';
+    updateProgress();
     generateQuestion();
 }
 
@@ -116,14 +131,43 @@ function changeTopic() {
 }
 
 function generateQuestion() {
+    if (questionCount >= totalQuestions) {
+        showResults();
+        return;
+    }
+    
+    questionCount++;
     document.getElementById('feedback').innerHTML = '';
     selectedOption = null;
+    updateProgress();
     
     if (currentSubject === 'math') {
         generateMathQuestion();
     } else {
         generateEnglishQuestion();
     }
+}
+
+function updateProgress() {
+    document.getElementById('progress').textContent = `Question ${questionCount}/${totalQuestions}`;
+}
+
+function showResults() {
+    const q = document.getElementById('question');
+    const a = document.getElementById('answerSection');
+    const feedback = document.getElementById('feedback');
+    
+    const percentage = Math.round((score / attempts) * 100);
+    
+    q.innerHTML = `🎉 Quiz Complete! 🎉`;
+    a.innerHTML = '';
+    feedback.innerHTML = `<div style="font-size:1.8em; margin:30px 0;">
+        You got <strong>${score}</strong> out of <strong>${attempts}</strong> correct!<br>
+        Score: <strong>${percentage}%</strong>
+    </div>
+    <button class="next-btn" onclick="startTopic('${currentTopic}')">Try Again</button>
+    <button class="change-topic-btn" onclick="changeTopic()">Different Topic</button>`;
+    feedback.className = 'feedback';
 }
 
 function selectOption(option) {

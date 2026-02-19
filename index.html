@@ -11,11 +11,11 @@
         <h1>🎓 Kids Learning Hub 🎓</h1>
         
         <div class="grade-selector">
-            <label for="grade">Select Grade:</label>
+            <label for="grade">Grade:</label>
             <select id="grade">
                 <option value="0">Pre-K</option>
                 <option value="1">Kindergarten</option>
-                <option value="2">1st Grade</option>
+                <option value="2" selected>1st Grade</option>
                 <option value="3">2nd Grade</option>
                 <option value="4">3rd Grade</option>
                 <option value="5">4th Grade</option>
@@ -25,6 +25,21 @@
                 <option value="9">8th Grade</option>
                 <option value="10">9th Grade</option>
                 <option value="11">10th Grade</option>
+            </select>
+            
+            <label for="difficulty" style="margin-left:20px;">Difficulty:</label>
+            <select id="difficulty">
+                <option value="easy">Easy</option>
+                <option value="medium" selected>Medium</option>
+                <option value="hard">Hard</option>
+            </select>
+            
+            <label for="questionCount" style="margin-left:20px;">Questions:</label>
+            <select id="questionCount">
+                <option value="5">5</option>
+                <option value="10" selected>10</option>
+                <option value="15">15</option>
+                <option value="20">20</option>
             </select>
         </div>
 
@@ -51,6 +66,7 @@
                 <button class="change-topic-btn" onclick="changeTopic()">Change Topic</button>
                 <button class="change-subject-btn" onclick="changeSubject()">Change Subject</button>
             </div>
+            <div id="progress" style="font-size:1.2em; color:#667eea; margin-bottom:10px;">Question 1/10</div>
             <div class="question" id="question"></div>
             <div id="answerSection"></div>
             <div class="feedback" id="feedback"></div>
