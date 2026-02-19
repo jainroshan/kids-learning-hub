@@ -34,35 +34,23 @@
         </div>
 
         <div id="mathOptions" class="topic-options">
+            <button class="back-btn" onclick="goHome()">← Home</button>
             <h2>Choose Math Topic:</h2>
-            <div class="topic-grid">
-                <button class="topic-btn" style="background:#ff6b6b;" onclick="startTopic('counting')">Counting</button>
-                <button class="topic-btn" style="background:#ff8787;" onclick="startTopic('addition')">Addition</button>
-                <button class="topic-btn" style="background:#ffa94d;" onclick="startTopic('subtraction')">Subtraction</button>
-                <button class="topic-btn" style="background:#ffd43b;" onclick="startTopic('multiplication')">Multiplication</button>
-                <button class="topic-btn" style="background:#74c0fc;" onclick="startTopic('division')">Division</button>
-                <button class="topic-btn" style="background:#b197fc;" onclick="startTopic('fractions')">Fractions</button>
-                <button class="topic-btn" style="background:#da77f2;" onclick="startTopic('percentages')">Percentages</button>
-                <button class="topic-btn" style="background:#ff6b9d;" onclick="startTopic('algebra')">Algebra</button>
-            </div>
+            <div class="topic-grid"></div>
         </div>
 
         <div id="englishOptions" class="topic-options">
+            <button class="back-btn" onclick="goHome()">← Home</button>
             <h2>Choose English Topic:</h2>
-            <div class="topic-grid">
-                <button class="topic-btn" style="background:#4ecdc4;" onclick="startTopic('letters')">Letters</button>
-                <button class="topic-btn" style="background:#45b7d1;" onclick="startTopic('spelling')">Spelling</button>
-                <button class="topic-btn" style="background:#5f27cd;" onclick="startTopic('grammar')">Grammar</button>
-                <button class="topic-btn" style="background:#00d2d3;" onclick="startTopic('vocabulary')">Vocabulary</button>
-                <button class="topic-btn" style="background:#1dd1a1;" onclick="startTopic('nouns')">Nouns</button>
-                <button class="topic-btn" style="background:#10ac84;" onclick="startTopic('verbs')">Verbs</button>
-                <button class="topic-btn" style="background:#54a0ff;" onclick="startTopic('reading')">Reading</button>
-                <button class="topic-btn" style="background:#2e86de;" onclick="startTopic('punctuation')">Punctuation</button>
-            </div>
+            <div class="topic-grid"></div>
         </div>
 
         <div id="questionArea" class="question-area">
-            <button class="back-btn" onclick="goHome()">← Back</button>
+            <div class="nav-buttons">
+                <button class="back-btn" onclick="goHome()">← Home</button>
+                <button class="change-topic-btn" onclick="changeTopic()">Change Topic</button>
+                <button class="change-subject-btn" onclick="changeSubject()">Change Subject</button>
+            </div>
             <div class="question" id="question"></div>
             <div id="answerSection"></div>
             <div class="feedback" id="feedback"></div>
