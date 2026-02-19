@@ -4,144 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Kids Learning Hub</title>
-    <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        body {
-            font-family: 'Comic Sans MS', cursive, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            min-height: 100vh;
-            padding: 20px;
-        }
-        .container {
-            max-width: 800px;
-            margin: 0 auto;
-            background: white;
-            border-radius: 20px;
-            padding: 30px;
-            box-shadow: 0 10px 40px rgba(0,0,0,0.2);
-        }
-        h1 {
-            color: #667eea;
-            text-align: center;
-            margin-bottom: 30px;
-            font-size: 2.5em;
-        }
-        .grade-selector {
-            text-align: center;
-            margin-bottom: 30px;
-        }
-        .grade-selector label {
-            font-size: 1.3em;
-            color: #333;
-            margin-right: 10px;
-        }
-        .grade-selector select {
-            padding: 10px 20px;
-            font-size: 1.1em;
-            border: 2px solid #667eea;
-            border-radius: 10px;
-            cursor: pointer;
-        }
-        .subject-buttons {
-            display: flex;
-            gap: 20px;
-            justify-content: center;
-            margin-bottom: 30px;
-        }
-        .subject-btn {
-            padding: 20px 40px;
-            font-size: 1.5em;
-            border: none;
-            border-radius: 15px;
-            cursor: pointer;
-            transition: transform 0.2s;
-            font-weight: bold;
-        }
-        .subject-btn:hover { transform: scale(1.05); }
-        .math-btn { background: #ff6b6b; color: white; }
-        .english-btn { background: #4ecdc4; color: white; }
-        .question-area {
-            display: none;
-            text-align: center;
-        }
-        .question {
-            font-size: 2em;
-            color: #333;
-            margin: 30px 0;
-            min-height: 60px;
-        }
-        .answer-input {
-            padding: 15px;
-            font-size: 1.5em;
-            border: 3px solid #667eea;
-            border-radius: 10px;
-            width: 300px;
-            text-align: center;
-        }
-        .submit-btn {
-            padding: 15px 40px;
-            font-size: 1.3em;
-            background: #51cf66;
-            color: white;
-            border: none;
-            border-radius: 10px;
-            cursor: pointer;
-            margin: 20px 10px;
-            font-weight: bold;
-        }
-        .submit-btn:hover { background: #40c057; }
-        .next-btn {
-            padding: 15px 40px;
-            font-size: 1.3em;
-            background: #667eea;
-            color: white;
-            border: none;
-            border-radius: 10px;
-            cursor: pointer;
-            margin: 20px 10px;
-            font-weight: bold;
-        }
-        .feedback {
-            font-size: 1.5em;
-            margin: 20px 0;
-            min-height: 40px;
-        }
-        .correct { color: #51cf66; }
-        .incorrect { color: #ff6b6b; }
-        .score {
-            text-align: center;
-            font-size: 1.3em;
-            color: #667eea;
-            margin-top: 20px;
-        }
-        .back-btn {
-            background: #868e96;
-            color: white;
-            padding: 10px 20px;
-            border: none;
-            border-radius: 10px;
-            cursor: pointer;
-            font-size: 1em;
-        }
-        .options {
-            display: flex;
-            flex-direction: column;
-            gap: 15px;
-            max-width: 400px;
-            margin: 20px auto;
-        }
-        .option-btn {
-            padding: 15px;
-            font-size: 1.3em;
-            border: 3px solid #667eea;
-            background: white;
-            border-radius: 10px;
-            cursor: pointer;
-            transition: all 0.2s;
-        }
-        .option-btn:hover { background: #f0f0f0; }
-        .option-btn.selected { background: #667eea; color: white; }
-    </style>
+    <link rel="stylesheet" href="styles.css">
 </head>
 <body>
     <div class="container">
@@ -165,23 +28,37 @@
             </select>
         </div>
 
-        <div id="mathOptions" style="display:none; text-align:center; margin-bottom:30px;">
-            <h2 style="color:#667eea; margin-bottom:20px;">Choose Math Topic:</h2>
-            <div style="display:flex; flex-wrap:wrap; gap:15px; justify-content:center;">
-                <button class="subject-btn" style="background:#ff6b6b; padding:15px 30px; font-size:1.2em;" onclick="startMathTopic('counting')">Counting</button>
-                <button class="subject-btn" style="background:#ff8787; padding:15px 30px; font-size:1.2em;" onclick="startMathTopic('addition')">Addition</button>
-                <button class="subject-btn" style="background:#ffa94d; padding:15px 30px; font-size:1.2em;" onclick="startMathTopic('subtraction')">Subtraction</button>
-                <button class="subject-btn" style="background:#ffd43b; padding:15px 30px; font-size:1.2em;" onclick="startMathTopic('multiplication')">Multiplication</button>
-                <button class="subject-btn" style="background:#74c0fc; padding:15px 30px; font-size:1.2em;" onclick="startMathTopic('division')">Division</button>
-                <button class="subject-btn" style="background:#b197fc; padding:15px 30px; font-size:1.2em;" onclick="startMathTopic('fractions')">Fractions</button>
-                <button class="subject-btn" style="background:#da77f2; padding:15px 30px; font-size:1.2em;" onclick="startMathTopic('percentages')">Percentages</button>
-                <button class="subject-btn" style="background:#ff6b9d; padding:15px 30px; font-size:1.2em;" onclick="startMathTopic('algebra')">Algebra</button>
-            </div>
-        </div>
-
         <div id="home" class="subject-buttons">
             <button class="subject-btn math-btn" onclick="startSubject('math')">🔢 Math</button>
             <button class="subject-btn english-btn" onclick="startSubject('english')">📚 English</button>
+        </div>
+
+        <div id="mathOptions" class="topic-options">
+            <h2>Choose Math Topic:</h2>
+            <div class="topic-grid">
+                <button class="topic-btn" style="background:#ff6b6b;" onclick="startTopic('counting')">Counting</button>
+                <button class="topic-btn" style="background:#ff8787;" onclick="startTopic('addition')">Addition</button>
+                <button class="topic-btn" style="background:#ffa94d;" onclick="startTopic('subtraction')">Subtraction</button>
+                <button class="topic-btn" style="background:#ffd43b;" onclick="startTopic('multiplication')">Multiplication</button>
+                <button class="topic-btn" style="background:#74c0fc;" onclick="startTopic('division')">Division</button>
+                <button class="topic-btn" style="background:#b197fc;" onclick="startTopic('fractions')">Fractions</button>
+                <button class="topic-btn" style="background:#da77f2;" onclick="startTopic('percentages')">Percentages</button>
+                <button class="topic-btn" style="background:#ff6b9d;" onclick="startTopic('algebra')">Algebra</button>
+            </div>
+        </div>
+
+        <div id="englishOptions" class="topic-options">
+            <h2>Choose English Topic:</h2>
+            <div class="topic-grid">
+                <button class="topic-btn" style="background:#4ecdc4;" onclick="startTopic('letters')">Letters</button>
+                <button class="topic-btn" style="background:#45b7d1;" onclick="startTopic('spelling')">Spelling</button>
+                <button class="topic-btn" style="background:#5f27cd;" onclick="startTopic('grammar')">Grammar</button>
+                <button class="topic-btn" style="background:#00d2d3;" onclick="startTopic('vocabulary')">Vocabulary</button>
+                <button class="topic-btn" style="background:#1dd1a1;" onclick="startTopic('nouns')">Nouns</button>
+                <button class="topic-btn" style="background:#10ac84;" onclick="startTopic('verbs')">Verbs</button>
+                <button class="topic-btn" style="background:#54a0ff;" onclick="startTopic('reading')">Reading</button>
+                <button class="topic-btn" style="background:#2e86de;" onclick="startTopic('punctuation')">Punctuation</button>
+            </div>
         </div>
 
         <div id="questionArea" class="question-area">
@@ -193,222 +70,8 @@
         </div>
     </div>
 
-    <script>
-        let currentSubject = '';
-        let currentGrade = 2;
-        let mathTopic = '';
-        let score = 0;
-        let attempts = 0;
-        let currentAnswer = '';
-        let selectedOption = null;
-
-        document.getElementById('grade').addEventListener('change', (e) => {
-            currentGrade = parseInt(e.target.value);
-        });
-
-        function startSubject(subject) {
-            currentSubject = subject;
-            score = 0;
-            attempts = 0;
-            
-            if (subject === 'math') {
-                document.getElementById('home').style.display = 'none';
-                document.getElementById('mathOptions').style.display = 'block';
-            } else {
-                document.getElementById('home').style.display = 'none';
-                document.getElementById('questionArea').style.display = 'block';
-                generateQuestion();
-            }
-        }
-
-        function startMathTopic(topic) {
-            mathTopic = topic;
-            document.getElementById('mathOptions').style.display = 'none';
-            document.getElementById('questionArea').style.display = 'block';
-            generateQuestion();
-        }
-
-        function goHome() {
-            document.getElementById('home').style.display = 'flex';
-            document.getElementById('mathOptions').style.display = 'none';
-            document.getElementById('questionArea').style.display = 'none';
-            document.getElementById('feedback').innerHTML = '';
-        }
-
-        function generateQuestion() {
-            document.getElementById('feedback').innerHTML = '';
-            selectedOption = null;
-            
-            if (currentSubject === 'math') {
-                generateMathQuestion();
-            } else {
-                generateEnglishQuestion();
-            }
-        }
-
-        function generateMathQuestion() {
-            const q = document.getElementById('question');
-            const a = document.getElementById('answerSection');
-            
-            if (mathTopic === 'counting') {
-                const num = Math.floor(Math.random() * 10) + 1;
-                q.innerHTML = `Count the stars: ${'⭐'.repeat(num)}`;
-                currentAnswer = num.toString();
-                a.innerHTML = '<input type="number" class="answer-input" id="answer" onkeypress="if(event.key===\'Enter\')checkAnswer()"><br><button class="submit-btn" onclick="checkAnswer()">Check Answer</button><button class="next-btn" onclick="generateQuestion()">Next Question</button>';
-            } else if (mathTopic === 'addition') {
-                const n1 = Math.floor(Math.random() * 50) + 1;
-                const n2 = Math.floor(Math.random() * 50) + 1;
-                q.textContent = `${n1} + ${n2} = ?`;
-                currentAnswer = (n1 + n2).toString();
-                a.innerHTML = '<input type="number" class="answer-input" id="answer" onkeypress="if(event.key===\'Enter\')checkAnswer()"><br><button class="submit-btn" onclick="checkAnswer()">Check Answer</button><button class="next-btn" onclick="generateQuestion()">Next Question</button>';
-            } else if (mathTopic === 'subtraction') {
-                const n1 = Math.floor(Math.random() * 50) + 1;
-                const n2 = Math.floor(Math.random() * 50) + 1;
-                const larger = Math.max(n1, n2);
-                const smaller = Math.min(n1, n2);
-                q.textContent = `${larger} - ${smaller} = ?`;
-                currentAnswer = (larger - smaller).toString();
-                a.innerHTML = '<input type="number" class="answer-input" id="answer" onkeypress="if(event.key===\'Enter\')checkAnswer()"><br><button class="submit-btn" onclick="checkAnswer()">Check Answer</button><button class="next-btn" onclick="generateQuestion()">Next Question</button>';
-            } else if (mathTopic === 'multiplication') {
-                const n1 = Math.floor(Math.random() * 12) + 1;
-                const n2 = Math.floor(Math.random() * 12) + 1;
-                q.textContent = `${n1} × ${n2} = ?`;
-                currentAnswer = (n1 * n2).toString();
-                a.innerHTML = '<input type="number" class="answer-input" id="answer" onkeypress="if(event.key===\'Enter\')checkAnswer()"><br><button class="submit-btn" onclick="checkAnswer()">Check Answer</button><button class="next-btn" onclick="generateQuestion()">Next Question</button>';
-            } else if (mathTopic === 'division') {
-                const n1 = Math.floor(Math.random() * 12) + 1;
-                const n2 = Math.floor(Math.random() * 12) + 1;
-                const product = n1 * n2;
-                q.textContent = `${product} ÷ ${n1} = ?`;
-                currentAnswer = n2.toString();
-                a.innerHTML = '<input type="number" class="answer-input" id="answer" onkeypress="if(event.key===\'Enter\')checkAnswer()"><br><button class="submit-btn" onclick="checkAnswer()">Check Answer</button><button class="next-btn" onclick="generateQuestion()">Next Question</button>';
-            } else if (mathTopic === 'fractions') {
-                const n1 = Math.floor(Math.random() * 5) + 1;
-                const d1 = Math.floor(Math.random() * 8) + 2;
-                const n2 = Math.floor(Math.random() * 5) + 1;
-                const d2 = d1;
-                q.textContent = `${n1}/${d1} + ${n2}/${d2} = ? (as decimal)`;
-                const result = (n1 + n2) / d1;
-                currentAnswer = result.toFixed(2);
-                a.innerHTML = '<input type="number" step="0.01" class="answer-input" id="answer" onkeypress="if(event.key===\'Enter\')checkAnswer()"><br><button class="submit-btn" onclick="checkAnswer()">Check Answer</button><button class="next-btn" onclick="generateQuestion()">Next Question</button>';
-            } else if (mathTopic === 'percentages') {
-                const num = Math.floor(Math.random() * 100) + 10;
-                const pct = [10, 20, 25, 50, 75][Math.floor(Math.random() * 5)];
-                q.textContent = `What is ${pct}% of ${num}?`;
-                currentAnswer = (num * pct / 100).toString();
-                a.innerHTML = '<input type="number" class="answer-input" id="answer" onkeypress="if(event.key===\'Enter\')checkAnswer()"><br><button class="submit-btn" onclick="checkAnswer()">Check Answer</button><button class="next-btn" onclick="generateQuestion()">Next Question</button>';
-            } else if (mathTopic === 'algebra') {
-                const x = Math.floor(Math.random() * 10) + 1;
-                const b = Math.floor(Math.random() * 20) + 1;
-                const c = x + b;
-                q.textContent = `Solve for x: x + ${b} = ${c}`;
-                currentAnswer = x.toString();
-                a.innerHTML = '<input type="number" class="answer-input" id="answer" onkeypress="if(event.key===\'Enter\')checkAnswer()"><br><button class="submit-btn" onclick="checkAnswer()">Check Answer</button><button class="next-btn" onclick="generateQuestion()">Next Question</button>';
-            }
-        }
-
-        function generateEnglishQuestion() {
-            const q = document.getElementById('question');
-            const a = document.getElementById('answerSection');
-            
-            if (currentGrade <= 1) {
-                // Pre-K/K: Letter recognition
-                const letters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
-                const letter = letters[Math.floor(Math.random() * letters.length)];
-                const options = [letter];
-                while (options.length < 4) {
-                    const opt = letters[Math.floor(Math.random() * letters.length)];
-                    if (!options.includes(opt)) options.push(opt);
-                }
-                options.sort(() => Math.random() - 0.5);
-                
-                q.textContent = `Which letter is "${letter.toLowerCase()}"?`;
-                currentAnswer = letter;
-                a.innerHTML = '<div class="options">' + options.map(opt => 
-                    `<button class="option-btn" onclick="selectOption('${opt}')">${opt}</button>`
-                ).join('') + '</div><button class="submit-btn" onclick="checkAnswer()">Check Answer</button><button class="next-btn" onclick="generateQuestion()">Next Question</button>';
-            } else if (currentGrade <= 3) {
-                // 1st-2nd: Simple words
-                const words = [
-                    {word: 'cat', options: ['cat', 'bat', 'hat', 'rat']},
-                    {word: 'dog', options: ['dog', 'fog', 'log', 'hog']},
-                    {word: 'sun', options: ['sun', 'fun', 'run', 'bun']},
-                    {word: 'tree', options: ['tree', 'free', 'three', 'knee']},
-                    {word: 'book', options: ['book', 'look', 'cook', 'hook']}
-                ];
-                const item = words[Math.floor(Math.random() * words.length)];
-                q.textContent = `Spell the word: "${item.word}"`;
-                currentAnswer = item.word;
-                a.innerHTML = '<input type="text" class="answer-input" id="answer" onkeypress="if(event.key===\'Enter\')checkAnswer()"><br><button class="submit-btn" onclick="checkAnswer()">Check Answer</button><button class="next-btn" onclick="generateQuestion()">Next Question</button>';
-            } else if (currentGrade <= 6) {
-                // 3rd-5th: Grammar and vocabulary
-                const questions = [
-                    {q: 'Choose the correct verb: She ___ to school.', opts: ['goes', 'go', 'going', 'went'], a: 'goes'},
-                    {q: 'What is a synonym for "happy"?', opts: ['joyful', 'sad', 'angry', 'tired'], a: 'joyful'},
-                    {q: 'Which is a noun?', opts: ['table', 'run', 'quickly', 'blue'], a: 'table'},
-                    {q: 'Choose the correct: They ___ playing.', opts: ['are', 'is', 'am', 'be'], a: 'are'},
-                    {q: 'What is an antonym for "big"?', opts: ['small', 'large', 'huge', 'giant'], a: 'small'}
-                ];
-                const item = questions[Math.floor(Math.random() * questions.length)];
-                q.textContent = item.q;
-                currentAnswer = item.a;
-                a.innerHTML = '<div class="options">' + item.opts.map(opt => 
-                    `<button class="option-btn" onclick="selectOption('${opt}')">${opt}</button>`
-                ).join('') + '</div><button class="submit-btn" onclick="checkAnswer()">Check Answer</button><button class="next-btn" onclick="generateQuestion()">Next Question</button>';
-            } else {
-                // 6th-10th: Advanced grammar and vocabulary
-                const questions = [
-                    {q: 'Identify the subject: "The quick brown fox jumps."', opts: ['fox', 'quick', 'jumps', 'brown'], a: 'fox'},
-                    {q: 'What is a metaphor?', opts: ['comparison without like/as', 'comparison with like/as', 'exaggeration', 'sound word'], a: 'comparison without like/as'},
-                    {q: 'Choose correct: Neither of them ___ ready.', opts: ['is', 'are', 'were', 'be'], a: 'is'},
-                    {q: 'What does "benevolent" mean?', opts: ['kind', 'evil', 'lazy', 'smart'], a: 'kind'},
-                    {q: 'Identify the clause type: "because it rained"', opts: ['dependent', 'independent', 'noun', 'adjective'], a: 'dependent'}
-                ];
-                const item = questions[Math.floor(Math.random() * questions.length)];
-                q.textContent = item.q;
-                currentAnswer = item.a;
-                a.innerHTML = '<div class="options">' + item.opts.map(opt => 
-                    `<button class="option-btn" onclick="selectOption(\'' + opt + '\')">${opt}</button>`
-                ).join('') + '</div><button class="submit-btn" onclick="checkAnswer()">Check Answer</button><button class="next-btn" onclick="generateQuestion()">Next Question</button>';
-            }
-        }
-
-        function selectOption(option) {
-            document.querySelectorAll('.option-btn').forEach(btn => {
-                btn.classList.remove('selected');
-            });
-            event.target.classList.add('selected');
-            selectedOption = option;
-        }
-
-        function checkAnswer() {
-            const feedback = document.getElementById('feedback');
-            let userAnswer = selectedOption || document.getElementById('answer')?.value.trim().toLowerCase();
-            const correct = currentAnswer.toLowerCase();
-            
-            attempts++;
-            
-            // For decimal answers, allow small tolerance
-            if (mathTopic === 'fractions' && !isNaN(userAnswer) && !isNaN(correct)) {
-                if (Math.abs(parseFloat(userAnswer) - parseFloat(correct)) < 0.01) {
-                    score++;
-                    feedback.innerHTML = '✅ Correct! Great job!';
-                    feedback.className = 'feedback correct';
-                } else {
-                    feedback.innerHTML = `❌ Not quite. The answer is ${currentAnswer}`;
-                    feedback.className = 'feedback incorrect';
-                }
-            } else if (userAnswer === correct) {
-                score++;
-                feedback.innerHTML = '✅ Correct! Great job!';
-                feedback.className = 'feedback correct';
-            } else {
-                feedback.innerHTML = `❌ Not quite. The answer is ${currentAnswer}`;
-                feedback.className = 'feedback incorrect';
-            }
-            
-            document.getElementById('score').textContent = `Score: ${score}/${attempts}`;
-        }
-    </script>
+    <script src="app.js"></script>
+    <script src="math.js"></script>
+    <script src="english.js"></script>
 </body>
 </html>
