@@ -30,6 +30,13 @@ const englishTopics = {
 
 document.getElementById('grade').addEventListener('change', (e) => {
     currentGrade = parseInt(e.target.value);
+    
+    // Refresh topic menu if currently viewing one
+    if (document.getElementById('mathOptions').style.display === 'block') {
+        showTopicMenu('math');
+    } else if (document.getElementById('englishOptions').style.display === 'block') {
+        showTopicMenu('english');
+    }
 });
 
 function startSubject(subject) {
