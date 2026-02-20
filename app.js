@@ -64,6 +64,7 @@ document.getElementById('questionCount').addEventListener('change', (e) => {
     // Update score display if in a quiz
     if (document.getElementById('questionArea').style.display === 'block') {
         document.getElementById('score').textContent = `Score: ${score}/${totalQuestions}`;
+        document.getElementById('progress').textContent = `Question ${questionCount}/${totalQuestions}`;
     }
 });
 
