@@ -177,11 +177,16 @@ function generateQuestion() {
     selectedOption = null;
     updateProgress();
     
+    // Show scratch pad for math, hide for others
     if (currentSubject === 'math') {
+        document.getElementById('scratchPad').style.display = 'block';
+        clearScratchPad();
         generateMathQuestion();
     } else if (currentSubject === 'english') {
+        document.getElementById('scratchPad').style.display = 'none';
         generateEnglishQuestion();
     } else {
+        document.getElementById('scratchPad').style.display = 'none';
         generateGKQuestion();
     }
 }
@@ -246,3 +251,81 @@ function checkAnswer() {
     
     document.getElementById('score').textContent = `Score: ${score}/${totalQuestions}`;
 }
+
+// Scratch pad functionality
+let isDrawing = false;
+let scratchCtx = null;
+
+function initScratchPad() {
+    const canvas = document.getElementById('scratchCanvas');
+    scratchCtx = canvas.getContext('2d');
+    scratchCtx.lineWidth = 2;
+    scratchCtx.lineCap = 'round';
+    scratchCtx.strokeStyle = '#333';
+    
+    // Mouse events
+    canvas.addEventListener('mousedown', startDrawing);
+    canvas.addEventListener('mousemove', draw);
+    canvas.addEventListener('mouseup', stopDrawing);
+    canvas.addEventListener('mouseout', stopDrawing);
+    
+    // Touch events
+    canvas.addEventListener('touchstart', handleTouch);
+    canvas.addEventListener('touchmove', handleTouch);
+    canvas.addEventListener('touchend', stopDrawing);
+}
+
+function startDrawing(e) {
+    isDrawing = true;
+    const rect = e.target.getBoundingClientRect();
+    scratchCtx.beginPath();
+    scratchCtx.moveTo(e.clientX - rect.left, e.clientY - rect.top);
+}
+
+function draw(e) {
+    if (!isDrawing) return;
+    const rect = e.target.getBoundingClientRect();
+    scratchCtx.lineTo(e.clientX - rect.left, e.clientY - rect.top);
+    scratchCtx.stroke();
+}
+
+function stopDrawing() {
+    isDrawing = false;
+}
+
+function handleTouch(e) {
+    e.preventDefault();
+    const touch = e.touches[0];
+    const rect = e.target.getBoundingClientRect();
+    
+    if (e.type === 'touchstart') {
+        isDrawing = true;
+        scratchCtx.beginPath();
+        scratchCtx.moveTo(touch.clientX - rect.left, touch.clientY - rect.top);
+    } else if (e.type === 'touchmove' && isDrawing) {
+        scratchCtx.lineTo(touch.clientX - rect.left, touch.clientY - rect.top);
+        scratchCtx.stroke();
+    }
+}
+
+function clearScratchPad() {
+    if (scratchCtx) {
+        const canvas = document.getElementById('scratchCanvas');
+        scratchCtx.clearRect(0, 0, canvas.width, canvas.height);
+    }
+}
+
+function toggleScratchPad() {
+    const pad = document.getElementById('scratchPad');
+    const btn = event.target;
+    if (pad.style.display === 'none') {
+        pad.style.display = 'block';
+        btn.textContent = 'Hide';
+    } else {
+        pad.style.display = 'none';
+        btn.textContent = 'Show Scratch Pad';
+    }
+}
+
+// Initialize scratch pad when page loads
+window.addEventListener('load', initScratchPad);
