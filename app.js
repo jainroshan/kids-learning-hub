@@ -88,6 +88,8 @@ function showTopicMenu(subject) {
     document.getElementById('mathOptions').style.display = 'none';
     document.getElementById('englishOptions').style.display = 'none';
     document.getElementById('gkOptions').style.display = 'none';
+    document.getElementById('learnSection').style.display = 'none';
+    document.getElementById('tutorialArea').style.display = 'none';
     
     const topics = subject === 'math' ? mathTopics : subject === 'english' ? englishTopics : gkTopics;
     const container = document.getElementById(subject + 'Options');
@@ -156,6 +158,8 @@ function goHome() {
     document.getElementById('mathOptions').style.display = 'none';
     document.getElementById('englishOptions').style.display = 'none';
     document.getElementById('gkOptions').style.display = 'none';
+    document.getElementById('learnSection').style.display = 'none';
+    document.getElementById('tutorialArea').style.display = 'none';
     document.getElementById('questionArea').style.display = 'none';
     document.getElementById('feedback').innerHTML = '';
 }
@@ -165,6 +169,8 @@ function changeSubject() {
     document.getElementById('mathOptions').style.display = 'none';
     document.getElementById('englishOptions').style.display = 'none';
     document.getElementById('gkOptions').style.display = 'none';
+    document.getElementById('learnSection').style.display = 'none';
+    document.getElementById('tutorialArea').style.display = 'none';
     document.getElementById('home').style.display = 'flex';
 }
 
