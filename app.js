@@ -212,6 +212,8 @@ function saveCurrentAnswer() {
     let userAnswer = selectedOption || document.getElementById('answer')?.value.trim();
     const questionText = document.getElementById('question').textContent || document.getElementById('question').innerText;
     
+    console.log('Saving answer:', {userAnswer, currentAnswer, questionText});
+    
     if (!userAnswer) {
         userAnswer = 'No answer';
     }
@@ -230,6 +232,8 @@ function saveCurrentAnswer() {
         isCorrect = true;
     }
     
+    console.log('Is correct?', isCorrect, 'User:', normalizedUser, 'Correct:', normalizedCorrect);
+    
     if (isCorrect) {
         score++;
     }
@@ -241,6 +245,8 @@ function saveCurrentAnswer() {
         correctAnswer: currentAnswer || 'N/A',
         isCorrect: isCorrect
     });
+    
+    console.log('Current score:', score, 'History length:', questionHistory.length);
 }
 
 function updateProgress() {
