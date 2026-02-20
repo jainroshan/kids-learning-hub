@@ -8,6 +8,7 @@ let score = 0;
 let attempts = 0;
 let currentAnswer = '';
 let selectedOption = null;
+let questionHistory = [];
 
 const mathTopics = {
     counting: { minGrade: 0, maxGrade: 1, label: 'Counting' },
@@ -135,6 +136,7 @@ function startTopic(topic) {
     questionCount = 0;
     score = 0;
     attempts = 0;
+    questionHistory = [];
     document.getElementById('mathOptions').style.display = 'none';
     document.getElementById('englishOptions').style.display = 'none';
     document.getElementById('gkOptions').style.display = 'none';
@@ -177,6 +179,9 @@ function generateQuestion() {
     selectedOption = null;
     updateProgress();
     
+    // Store current question for history
+    window.currentQuestionText = '';
+    
     // Show scratch pad for math, hide for others
     if (currentSubject === 'math') {
         document.getElementById('scratchPad').style.display = 'block';
@@ -203,13 +208,33 @@ function showResults() {
     const percentage = Math.round((score / totalQuestions) * 100);
     
     q.innerHTML = `🎉 Quiz Complete! 🎉`;
-    a.innerHTML = '';
-    feedback.innerHTML = `<div style="font-size:1.8em; margin:30px 0;">
+    
+    // Build review HTML
+    let reviewHTML = `<div style="font-size:1.5em; margin:20px 0;">
         You got <strong>${score}</strong> out of <strong>${totalQuestions}</strong> correct!<br>
         Score: <strong>${percentage}%</strong>
     </div>
+    <div style="text-align:left; max-width:600px; margin:20px auto; max-height:400px; overflow-y:auto;">
+        <h3 style="color:#667eea; margin-bottom:15px;">Review Your Answers:</h3>`;
+    
+    questionHistory.forEach((item, index) => {
+        const icon = item.isCorrect ? '✅' : '❌';
+        const color = item.isCorrect ? '#51cf66' : '#ff6b6b';
+        reviewHTML += `
+            <div style="border: 2px solid ${color}; border-radius:10px; padding:15px; margin-bottom:15px; background:#f8f9fa;">
+                <div style="font-weight:bold; margin-bottom:8px;">${icon} Question ${index + 1}</div>
+                <div style="margin-bottom:8px;">${item.question}</div>
+                <div style="color:#666;">Your answer: <strong>${item.userAnswer}</strong></div>
+                ${!item.isCorrect ? `<div style="color:${color};">Correct answer: <strong>${item.correctAnswer}</strong></div>` : ''}
+            </div>`;
+    });
+    
+    reviewHTML += `</div>
     <button class="next-btn" onclick="startTopic('${currentTopic}')">Try Again</button>
     <button class="change-topic-btn" onclick="changeTopic()">Different Topic</button>`;
+    
+    a.innerHTML = reviewHTML;
+    feedback.innerHTML = '';
     feedback.className = 'feedback';
 }
 
@@ -230,6 +255,9 @@ function checkAnswer() {
         return;
     }
     
+    // Store question text
+    const questionText = document.getElementById('question').textContent;
+    
     attempts++;
     
     // Normalize answers for comparison (trim and lowercase)
@@ -245,6 +273,14 @@ function checkAnswer() {
     } else if (normalizedUser === normalizedCorrect) {
         isCorrect = true;
     }
+    
+    // Save to history
+    questionHistory.push({
+        question: questionText,
+        userAnswer: userAnswer || 'No answer',
+        correctAnswer: currentAnswer,
+        isCorrect: isCorrect
+    });
     
     if (isCorrect) {
         score++;
