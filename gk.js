@@ -2,6 +2,16 @@ function generateGKQuestion() {
     const q = document.getElementById('question');
     const a = document.getElementById('answerSection');
     
+    // Shuffle array helper
+    function shuffleArray(array) {
+        const arr = [...array];
+        for (let i = arr.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [arr[i], arr[j]] = [arr[j], arr[i]];
+        }
+        return arr;
+    }
+    
     if (currentTopic === 'animals') {
         const questions = [
             {q: 'What sound does a dog make?', opts: ['Bark', 'Meow', 'Moo', 'Quack'], a: 'Bark'},
@@ -11,12 +21,20 @@ function generateGKQuestion() {
             {q: 'Which animal is known as the king of the jungle?', opts: ['Lion', 'Tiger', 'Bear', 'Elephant'], a: 'Lion'},
             {q: 'What do cows give us?', opts: ['Milk', 'Honey', 'Eggs', 'Wool'], a: 'Milk'},
             {q: 'Which bird cannot fly?', opts: ['Penguin', 'Eagle', 'Parrot', 'Sparrow'], a: 'Penguin'},
-            {q: 'How many legs does a spider have?', opts: ['8', '6', '4', '10'], a: '8'}
+            {q: 'How many legs does a spider have?', opts: ['8', '6', '4', '10'], a: '8'},
+            {q: 'What is the fastest land animal?', opts: ['Cheetah', 'Lion', 'Horse', 'Dog'], a: 'Cheetah'},
+            {q: 'Which animal has a pouch?', opts: ['Kangaroo', 'Bear', 'Rabbit', 'Squirrel'], a: 'Kangaroo'},
+            {q: 'What do sheep give us?', opts: ['Wool', 'Milk', 'Eggs', 'Honey'], a: 'Wool'},
+            {q: 'Which animal lives in water and on land?', opts: ['Frog', 'Fish', 'Bird', 'Snake'], a: 'Frog'},
+            {q: 'What is a baby dog called?', opts: ['Puppy', 'Kitten', 'Calf', 'Cub'], a: 'Puppy'},
+            {q: 'Which animal has black and white stripes?', opts: ['Zebra', 'Tiger', 'Leopard', 'Horse'], a: 'Zebra'},
+            {q: 'What do chickens lay?', opts: ['Eggs', 'Milk', 'Honey', 'Wool'], a: 'Eggs'}
         ];
         const item = questions[Math.floor(Math.random() * questions.length)];
+        const shuffled = shuffleArray([...item.opts]);
         q.textContent = item.q;
         currentAnswer = item.a;
-        a.innerHTML = '<div class="options">' + item.opts.map(opt => 
+        a.innerHTML = '<div class="options">' + shuffled.map(opt => 
             `<button class="option-btn" onclick="selectOption('${opt}')">${opt}</button>`
         ).join('') + '</div><button class="submit-btn" onclick="checkAnswer()">Check Answer</button><button class="next-btn" onclick="generateQuestion()">Next Question</button>';
     } else if (currentTopic === 'geography') {
@@ -32,7 +50,7 @@ function generateGKQuestion() {
         const item = questions[Math.floor(Math.random() * questions.length)];
         q.textContent = item.q;
         currentAnswer = item.a;
-        a.innerHTML = '<div class="options">' + item.opts.map(opt => 
+        a.innerHTML = '<div class="options">' + shuffleArray([...item.opts]).map(opt => 
             `<button class="option-btn" onclick="selectOption('${opt}')">${opt}</button>`
         ).join('') + '</div><button class="submit-btn" onclick="checkAnswer()">Check Answer</button><button class="next-btn" onclick="generateQuestion()">Next Question</button>';
     } else if (currentTopic === 'science') {
@@ -48,7 +66,7 @@ function generateGKQuestion() {
         const item = questions[Math.floor(Math.random() * questions.length)];
         q.textContent = item.q;
         currentAnswer = item.a;
-        a.innerHTML = '<div class="options">' + item.opts.map(opt => 
+        a.innerHTML = '<div class="options">' + shuffleArray([...item.opts]).map(opt => 
             `<button class="option-btn" onclick="selectOption('${opt}')">${opt}</button>`
         ).join('') + '</div><button class="submit-btn" onclick="checkAnswer()">Check Answer</button><button class="next-btn" onclick="generateQuestion()">Next Question</button>';
     } else if (currentTopic === 'history') {
@@ -63,7 +81,7 @@ function generateGKQuestion() {
         const item = questions[Math.floor(Math.random() * questions.length)];
         q.textContent = item.q;
         currentAnswer = item.a;
-        a.innerHTML = '<div class="options">' + item.opts.map(opt => 
+        a.innerHTML = '<div class="options">' + shuffleArray([...item.opts]).map(opt => 
             `<button class="option-btn" onclick="selectOption('${opt}')">${opt}</button>`
         ).join('') + '</div><button class="submit-btn" onclick="checkAnswer()">Check Answer</button><button class="next-btn" onclick="generateQuestion()">Next Question</button>';
     } else if (currentTopic === 'space') {
@@ -79,7 +97,7 @@ function generateGKQuestion() {
         const item = questions[Math.floor(Math.random() * questions.length)];
         q.textContent = item.q;
         currentAnswer = item.a;
-        a.innerHTML = '<div class="options">' + item.opts.map(opt => 
+        a.innerHTML = '<div class="options">' + shuffleArray([...item.opts]).map(opt => 
             `<button class="option-btn" onclick="selectOption('${opt}')">${opt}</button>`
         ).join('') + '</div><button class="submit-btn" onclick="checkAnswer()">Check Answer</button><button class="next-btn" onclick="generateQuestion()">Next Question</button>';
     } else if (currentTopic === 'nature') {
@@ -95,7 +113,7 @@ function generateGKQuestion() {
         const item = questions[Math.floor(Math.random() * questions.length)];
         q.textContent = item.q;
         currentAnswer = item.a;
-        a.innerHTML = '<div class="options">' + item.opts.map(opt => 
+        a.innerHTML = '<div class="options">' + shuffleArray([...item.opts]).map(opt => 
             `<button class="option-btn" onclick="selectOption('${opt}')">${opt}</button>`
         ).join('') + '</div><button class="submit-btn" onclick="checkAnswer()">Check Answer</button><button class="next-btn" onclick="generateQuestion()">Next Question</button>';
     } else if (currentTopic === 'sports') {
@@ -111,7 +129,7 @@ function generateGKQuestion() {
         const item = questions[Math.floor(Math.random() * questions.length)];
         q.textContent = item.q;
         currentAnswer = item.a;
-        a.innerHTML = '<div class="options">' + item.opts.map(opt => 
+        a.innerHTML = '<div class="options">' + shuffleArray([...item.opts]).map(opt => 
             `<button class="option-btn" onclick="selectOption('${opt}')">${opt}</button>`
         ).join('') + '</div><button class="submit-btn" onclick="checkAnswer()">Check Answer</button><button class="next-btn" onclick="generateQuestion()">Next Question</button>';
     } else if (currentTopic === 'countries') {
@@ -127,7 +145,7 @@ function generateGKQuestion() {
         const item = questions[Math.floor(Math.random() * questions.length)];
         q.textContent = item.q;
         currentAnswer = item.a;
-        a.innerHTML = '<div class="options">' + item.opts.map(opt => 
+        a.innerHTML = '<div class="options">' + shuffleArray([...item.opts]).map(opt => 
             `<button class="option-btn" onclick="selectOption('${opt}')">${opt}</button>`
         ).join('') + '</div><button class="submit-btn" onclick="checkAnswer()">Check Answer</button><button class="next-btn" onclick="generateQuestion()">Next Question</button>';
     }

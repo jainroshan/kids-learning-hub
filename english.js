@@ -2,6 +2,16 @@ function generateEnglishQuestion() {
     const q = document.getElementById('question');
     const a = document.getElementById('answerSection');
     
+    // Shuffle array helper
+    function shuffleArray(array) {
+        const arr = [...array];
+        for (let i = arr.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [arr[i], arr[j]] = [arr[j], arr[i]];
+        }
+        return arr;
+    }
+    
     if (currentTopic === 'letters') {
         const letters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
         const letter = letters[Math.floor(Math.random() * letters.length)];
@@ -14,7 +24,7 @@ function generateEnglishQuestion() {
         
         q.textContent = `Which letter is "${letter.toLowerCase()}"?`;
         currentAnswer = letter;
-        a.innerHTML = '<div class="options">' + options.map(opt => 
+        a.innerHTML = '<div class="options">' + shuffleArray([...options]).map(opt => 
             `<button class="option-btn" onclick="selectOption('${opt}')">${opt}</button>`
         ).join('') + '</div><button class="submit-btn" onclick="checkAnswer()">Check Answer</button><button class="next-btn" onclick="generateQuestion()">Next Question</button>';
     } else if (currentTopic === 'spelling') {
@@ -34,7 +44,7 @@ function generateEnglishQuestion() {
         const item = questions[Math.floor(Math.random() * questions.length)];
         q.textContent = item.q;
         currentAnswer = item.a;
-        a.innerHTML = '<div class="options">' + item.opts.map(opt => 
+        a.innerHTML = '<div class="options">' + shuffleArray([...item.opts]).map(opt => 
             `<button class="option-btn" onclick="selectOption('${opt}')">${opt}</button>`
         ).join('') + '</div><button class="submit-btn" onclick="checkAnswer()">Check Answer</button><button class="next-btn" onclick="generateQuestion()">Next Question</button>';
     } else if (currentTopic === 'vocabulary') {
@@ -48,7 +58,7 @@ function generateEnglishQuestion() {
         const item = questions[Math.floor(Math.random() * questions.length)];
         q.textContent = item.q;
         currentAnswer = item.a;
-        a.innerHTML = '<div class="options">' + item.opts.map(opt => 
+        a.innerHTML = '<div class="options">' + shuffleArray([...item.opts]).map(opt => 
             `<button class="option-btn" onclick="selectOption('${opt}')">${opt}</button>`
         ).join('') + '</div><button class="submit-btn" onclick="checkAnswer()">Check Answer</button><button class="next-btn" onclick="generateQuestion()">Next Question</button>';
     } else if (currentTopic === 'nouns') {
@@ -62,7 +72,7 @@ function generateEnglishQuestion() {
         const item = questions[Math.floor(Math.random() * questions.length)];
         q.textContent = item.q;
         currentAnswer = item.a;
-        a.innerHTML = '<div class="options">' + item.opts.map(opt => 
+        a.innerHTML = '<div class="options">' + shuffleArray([...item.opts]).map(opt => 
             `<button class="option-btn" onclick="selectOption('${opt}')">${opt}</button>`
         ).join('') + '</div><button class="submit-btn" onclick="checkAnswer()">Check Answer</button><button class="next-btn" onclick="generateQuestion()">Next Question</button>';
     } else if (currentTopic === 'verbs') {
@@ -76,7 +86,7 @@ function generateEnglishQuestion() {
         const item = questions[Math.floor(Math.random() * questions.length)];
         q.textContent = item.q;
         currentAnswer = item.a;
-        a.innerHTML = '<div class="options">' + item.opts.map(opt => 
+        a.innerHTML = '<div class="options">' + shuffleArray([...item.opts]).map(opt => 
             `<button class="option-btn" onclick="selectOption('${opt}')">${opt}</button>`
         ).join('') + '</div><button class="submit-btn" onclick="checkAnswer()">Check Answer</button><button class="next-btn" onclick="generateQuestion()">Next Question</button>';
     } else if (currentTopic === 'reading') {
@@ -88,7 +98,7 @@ function generateEnglishQuestion() {
         const item = passages[Math.floor(Math.random() * passages.length)];
         q.innerHTML = `<div style="margin-bottom:20px; font-size:0.8em; font-style:italic;">"${item.text}"</div>${item.q}`;
         currentAnswer = item.a;
-        a.innerHTML = '<div class="options">' + item.opts.map(opt => 
+        a.innerHTML = '<div class="options">' + shuffleArray([...item.opts]).map(opt => 
             `<button class="option-btn" onclick="selectOption('${opt}')">${opt}</button>`
         ).join('') + '</div><button class="submit-btn" onclick="checkAnswer()">Check Answer</button><button class="next-btn" onclick="generateQuestion()">Next Question</button>';
     } else if (currentTopic === 'punctuation') {
@@ -100,7 +110,7 @@ function generateEnglishQuestion() {
         const item = questions[Math.floor(Math.random() * questions.length)];
         q.textContent = item.q;
         currentAnswer = item.a;
-        a.innerHTML = '<div class="options">' + item.opts.map(opt => 
+        a.innerHTML = '<div class="options">' + shuffleArray([...item.opts]).map(opt => 
             `<button class="option-btn" onclick="selectOption('${opt}')">${opt}</button>`
         ).join('') + '</div><button class="submit-btn" onclick="checkAnswer()">Check Answer</button><button class="next-btn" onclick="generateQuestion()">Next Question</button>';
     }
