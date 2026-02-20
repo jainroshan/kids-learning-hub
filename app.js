@@ -106,6 +106,7 @@ function startTopic(topic) {
     document.getElementById('mathOptions').style.display = 'none';
     document.getElementById('englishOptions').style.display = 'none';
     document.getElementById('questionArea').style.display = 'block';
+    document.getElementById('score').textContent = `Score: 0/${totalQuestions}`;
     updateProgress();
     generateQuestion();
 }
@@ -203,5 +204,5 @@ function checkAnswer() {
         feedback.className = 'feedback incorrect';
     }
     
-    document.getElementById('score').textContent = `Score: ${score}/${attempts}`;
+    document.getElementById('score').textContent = `Score: ${score}/${totalQuestions}`;
 }
