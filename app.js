@@ -210,7 +210,7 @@ function generateQuestion() {
 function saveCurrentAnswer() {
     // Get user's answer
     let userAnswer = selectedOption || document.getElementById('answer')?.value.trim();
-    const questionText = document.getElementById('question').textContent;
+    const questionText = document.getElementById('question').textContent || document.getElementById('question').innerText;
     
     if (!userAnswer) {
         userAnswer = 'No answer';
@@ -218,7 +218,7 @@ function saveCurrentAnswer() {
     
     // Normalize answers for comparison
     const normalizedUser = userAnswer ? userAnswer.toString().trim().toLowerCase() : '';
-    const normalizedCorrect = currentAnswer.toString().trim().toLowerCase();
+    const normalizedCorrect = currentAnswer ? currentAnswer.toString().trim().toLowerCase() : '';
     
     let isCorrect = false;
     
@@ -226,7 +226,7 @@ function saveCurrentAnswer() {
         if (Math.abs(parseFloat(userAnswer) - parseFloat(currentAnswer)) < 0.01) {
             isCorrect = true;
         }
-    } else if (normalizedUser === normalizedCorrect) {
+    } else if (normalizedUser === normalizedCorrect && normalizedCorrect !== '') {
         isCorrect = true;
     }
     
@@ -238,11 +238,9 @@ function saveCurrentAnswer() {
     questionHistory.push({
         question: questionText,
         userAnswer: userAnswer,
-        correctAnswer: currentAnswer,
+        correctAnswer: currentAnswer || 'N/A',
         isCorrect: isCorrect
     });
-    
-    document.getElementById('score').textContent = `Score: ${score}/${totalQuestions}`;
 }
 
 function updateProgress() {
@@ -254,7 +252,7 @@ function showResults() {
     const a = document.getElementById('answerSection');
     const feedback = document.getElementById('feedback');
     
-    const percentage = Math.round((score / totalQuestions) * 100);
+    const percentage = totalQuestions > 0 ? Math.round((score / totalQuestions) * 100) : 0;
     
     q.innerHTML = `🎉 Quiz Complete! 🎉`;
     
@@ -262,23 +260,28 @@ function showResults() {
     let reviewHTML = `<div style="font-size:1.5em; margin:20px 0;">
         You got <strong>${score}</strong> out of <strong>${totalQuestions}</strong> correct!<br>
         Score: <strong>${percentage}%</strong>
-    </div>
-    <div style="text-align:left; max-width:600px; margin:20px auto; max-height:400px; overflow-y:auto;">
-        <h3 style="color:#667eea; margin-bottom:15px;">Review Your Answers:</h3>`;
+    </div>`;
     
-    questionHistory.forEach((item, index) => {
-        const icon = item.isCorrect ? '✅' : '❌';
-        const color = item.isCorrect ? '#51cf66' : '#ff6b6b';
-        reviewHTML += `
-            <div style="border: 2px solid ${color}; border-radius:10px; padding:15px; margin-bottom:15px; background:#f8f9fa;">
-                <div style="font-weight:bold; margin-bottom:8px;">${icon} Question ${index + 1}</div>
-                <div style="margin-bottom:8px;">${item.question}</div>
-                <div style="color:#666;">Your answer: <strong>${item.userAnswer}</strong></div>
-                ${!item.isCorrect ? `<div style="color:${color};">Correct answer: <strong>${item.correctAnswer}</strong></div>` : ''}
-            </div>`;
-    });
+    if (questionHistory.length > 0) {
+        reviewHTML += `<div style="text-align:left; max-width:600px; margin:20px auto; max-height:400px; overflow-y:auto;">
+            <h3 style="color:#667eea; margin-bottom:15px;">Review Your Answers:</h3>`;
+        
+        questionHistory.forEach((item, index) => {
+            const icon = item.isCorrect ? '✅' : '❌';
+            const color = item.isCorrect ? '#51cf66' : '#ff6b6b';
+            reviewHTML += `
+                <div style="border: 2px solid ${color}; border-radius:10px; padding:15px; margin-bottom:15px; background:#f8f9fa;">
+                    <div style="font-weight:bold; margin-bottom:8px;">${icon} Question ${index + 1}</div>
+                    <div style="margin-bottom:8px;">${item.question}</div>
+                    <div style="color:#666;">Your answer: <strong>${item.userAnswer}</strong></div>
+                    ${!item.isCorrect ? `<div style="color:${color};">Correct answer: <strong>${item.correctAnswer}</strong></div>` : ''}
+                </div>`;
+        });
+        
+        reviewHTML += `</div>`;
+    }
     
-    reviewHTML += `</div>
+    reviewHTML += `
     <button class="next-btn" onclick="startTopic('${currentTopic}')">Try Again</button>
     <button class="change-topic-btn" onclick="changeTopic()">Different Topic</button>`;
     
@@ -296,9 +299,10 @@ function selectOption(option) {
 }
 
 function checkAnswer() {
-    // This function is now replaced by saveCurrentAnswer
-    // Called when clicking Next Question
-    saveCurrentAnswer();
+    // Save current answer and move to next question
+    if (currentAnswer) {
+        saveCurrentAnswer();
+    }
     generateQuestion();
 }
 
