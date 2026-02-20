@@ -36,14 +36,14 @@ function generateEnglishQuestion() {
         currentAnswer = letter;
         a.innerHTML = '<div class="options">' + shuffled.map(opt => 
             `<button class="option-btn" onclick="selectOption('${opt}')">${opt}</button>`
-        ).join('') + '</div><button class="next-btn" onclick="generateQuestion()">Next Question</button>';
+        ).join('') + '</div><button class="next-btn" onclick="checkAnswer()">Next Question</button>';
     } else if (currentTopic === 'spelling') {
         const words = ['cat', 'dog', 'sun', 'tree', 'book', 'house', 'water', 'happy', 'friend', 'school', 
                        'apple', 'table', 'chair', 'pencil', 'paper', 'window', 'door', 'flower', 'garden', 'family'];
         const word = words[Math.floor(Math.random() * words.length)];
         q.textContent = `Spell the word: "${word}"`;
         currentAnswer = word;
-        a.innerHTML = '<input type="text" class="answer-input" id="answer"><br><button class="next-btn" onclick="generateQuestion()">Next Question</button>';
+        a.innerHTML = '<input type="text" class="answer-input" id="answer"><br><button class="next-btn" onclick="checkAnswer()">Next Question</button>';
     } else {
         const questions = englishQuestions[currentTopic];
         if (!questions || questions.length === 0) {
@@ -64,6 +64,6 @@ function generateEnglishQuestion() {
         currentAnswer = item.a;
         a.innerHTML = '<div class="options">' + shuffled.map(opt => 
             `<button class="option-btn" onclick="selectOption('${opt}')">${opt}</button>`
-        ).join('') + '</div><button class="next-btn" onclick="generateQuestion()">Next Question</button>';
+        ).join('') + '</div><button class="next-btn" onclick="checkAnswer()">Next Question</button>';
     }
 }
