@@ -158,12 +158,12 @@ function showResults() {
     const a = document.getElementById('answerSection');
     const feedback = document.getElementById('feedback');
     
-    const percentage = Math.round((score / attempts) * 100);
+    const percentage = Math.round((score / totalQuestions) * 100);
     
     q.innerHTML = `🎉 Quiz Complete! 🎉`;
     a.innerHTML = '';
     feedback.innerHTML = `<div style="font-size:1.8em; margin:30px 0;">
-        You got <strong>${score}</strong> out of <strong>${attempts}</strong> correct!<br>
+        You got <strong>${score}</strong> out of <strong>${totalQuestions}</strong> correct!<br>
         Score: <strong>${percentage}%</strong>
     </div>
     <button class="next-btn" onclick="startTopic('${currentTopic}')">Try Again</button>
