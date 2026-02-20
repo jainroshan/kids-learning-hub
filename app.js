@@ -61,6 +61,10 @@ document.getElementById('difficulty').addEventListener('change', (e) => {
 
 document.getElementById('questionCount').addEventListener('change', (e) => {
     totalQuestions = parseInt(e.target.value);
+    // Update score display if in a quiz
+    if (document.getElementById('questionArea').style.display === 'block') {
+        document.getElementById('score').textContent = `Score: ${score}/${totalQuestions}`;
+    }
 });
 
 function startSubject(subject) {
@@ -73,6 +77,11 @@ function startSubject(subject) {
 }
 
 function showTopicMenu(subject) {
+    // Hide all topic menus first
+    document.getElementById('mathOptions').style.display = 'none';
+    document.getElementById('englishOptions').style.display = 'none';
+    document.getElementById('gkOptions').style.display = 'none';
+    
     const topics = subject === 'math' ? mathTopics : subject === 'english' ? englishTopics : gkTopics;
     const container = document.getElementById(subject + 'Options');
     const grid = container.querySelector('.topic-grid');
