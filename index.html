@@ -27,6 +27,14 @@
                 <option value="11">10th Grade</option>
             </select>
             
+            <label for="digitCount" style="margin-left:20px;">Digits (Math):</label>
+            <select id="digitCount">
+                <option value="1">1-digit</option>
+                <option value="2" selected>2-digit</option>
+                <option value="3">3-digit</option>
+                <option value="4">4-digit</option>
+            </select>
+            
             <label for="difficulty" style="margin-left:20px;">Difficulty:</label>
             <select id="difficulty">
                 <option value="easy">Easy</option>
@@ -47,6 +55,7 @@
             <button class="subject-btn math-btn" onclick="startSubject('math')">🔢 Math</button>
             <button class="subject-btn english-btn" onclick="startSubject('english')">📚 English</button>
             <button class="subject-btn" style="background:#20bf6b;" onclick="startSubject('gk')">🌍 General Knowledge</button>
+            <button class="subject-btn" style="background:#f39c12;" onclick="showLearnSection()">📖 Learn Math</button>
         </div>
 
         <div id="mathOptions" class="topic-options">
@@ -65,6 +74,22 @@
             <button class="back-btn" onclick="goHome()">← Home</button>
             <h2>Choose General Knowledge Topic:</h2>
             <div class="topic-grid"></div>
+        </div>
+
+        <div id="learnSection" class="topic-options">
+            <button class="back-btn" onclick="goHome()">← Home</button>
+            <h2>Learn Math Operations:</h2>
+            <div class="topic-grid">
+                <button class="topic-btn" style="background:#ff8787;" onclick="showLearnTutorial('addition')">Addition</button>
+                <button class="topic-btn" style="background:#ffa94d;" onclick="showLearnTutorial('subtraction')">Subtraction</button>
+                <button class="topic-btn" style="background:#ffd43b;" onclick="showLearnTutorial('multiplication')">Multiplication</button>
+                <button class="topic-btn" style="background:#74c0fc;" onclick="showLearnTutorial('division')">Division</button>
+            </div>
+        </div>
+
+        <div id="tutorialArea" style="display:none; text-align:left; max-width:700px; margin:0 auto; padding:20px;">
+            <button class="back-btn" onclick="backToLearn()">← Back to Learn</button>
+            <div id="tutorialContent"></div>
         </div>
 
         <div id="questionArea" class="question-area">

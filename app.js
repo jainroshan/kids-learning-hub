@@ -9,13 +9,14 @@ let attempts = 0;
 let currentAnswer = '';
 let selectedOption = null;
 let questionHistory = [];
+let digitCount = 2; // Default to 2-digit numbers
 
 const mathTopics = {
     counting: { minGrade: 0, maxGrade: 1, label: 'Counting' },
-    addition: { minGrade: 1, maxGrade: 11, label: 'Addition' },
-    subtraction: { minGrade: 1, maxGrade: 11, label: 'Subtraction' },
-    multiplication: { minGrade: 3, maxGrade: 11, label: 'Multiplication' },
-    division: { minGrade: 3, maxGrade: 11, label: 'Division' },
+    addition: { minGrade: 1, maxGrade: 11, label: 'Addition', digits: [1, 2, 3, 4] },
+    subtraction: { minGrade: 1, maxGrade: 11, label: 'Subtraction', digits: [1, 2, 3, 4] },
+    multiplication: { minGrade: 3, maxGrade: 11, label: 'Multiplication', digits: [1, 2, 3] },
+    division: { minGrade: 3, maxGrade: 11, label: 'Division', digits: [1, 2, 3] },
     fractions: { minGrade: 4, maxGrade: 11, label: 'Fractions' },
     percentages: { minGrade: 5, maxGrade: 11, label: 'Percentages' },
     algebra: { minGrade: 7, maxGrade: 11, label: 'Algebra' }
@@ -58,6 +59,10 @@ document.getElementById('grade').addEventListener('change', (e) => {
 
 document.getElementById('difficulty').addEventListener('change', (e) => {
     difficulty = e.target.value;
+});
+
+document.getElementById('digitCount').addEventListener('change', (e) => {
+    digitCount = parseInt(e.target.value);
 });
 
 document.getElementById('questionCount').addEventListener('change', (e) => {
@@ -392,3 +397,232 @@ function toggleScratchPad() {
 
 // Initialize scratch pad when page loads
 window.addEventListener('load', initScratchPad);
+
+function showLearnSection() {
+    document.getElementById('home').style.display = 'none';
+    document.getElementById('learnSection').style.display = 'block';
+}
+
+function backToLearn() {
+    document.getElementById('tutorialArea').style.display = 'none';
+    document.getElementById('learnSection').style.display = 'block';
+}
+
+function showLearnTutorial(operation) {
+    document.getElementById('learnSection').style.display = 'none';
+    document.getElementById('tutorialArea').style.display = 'block';
+    
+    const tutorials = {
+        addition: `
+            <h2 style="color:#667eea;">Addition with Carrying</h2>
+            <div style="line-height:1.8; font-size:1.1em;">
+                <h3>Example 1: Simple Addition (No Carrying)</h3>
+                <pre style="background:#f8f9fa; padding:15px; border-radius:8px; font-size:1.2em;">
+    23
+  + 45
+  ----
+    68
+                </pre>
+                <p><strong>Steps:</strong></p>
+                <ol>
+                    <li>Add the ones place: 3 + 5 = 8</li>
+                    <li>Add the tens place: 2 + 4 = 6</li>
+                    <li>Answer: 68</li>
+                </ol>
+                
+                <h3 style="margin-top:30px;">Example 2: Addition with Carrying</h3>
+                <pre style="background:#f8f9fa; padding:15px; border-radius:8px; font-size:1.2em;">
+     ¹
+    47
+  + 38
+  ----
+    85
+                </pre>
+                <p><strong>Steps:</strong></p>
+                <ol>
+                    <li>Add the ones place: 7 + 8 = 15</li>
+                    <li>Write 5 in ones place, carry 1 to tens</li>
+                    <li>Add the tens place: 1 + 4 + 3 = 8</li>
+                    <li>Answer: 85</li>
+                </ol>
+                
+                <h3 style="margin-top:30px;">Example 3: Multiple Carries</h3>
+                <pre style="background:#f8f9fa; padding:15px; border-radius:8px; font-size:1.2em;">
+    ¹ ¹
+   567
+ + 489
+ -----
+  1056
+                </pre>
+                <p><strong>Steps:</strong></p>
+                <ol>
+                    <li>Ones: 7 + 9 = 16 → Write 6, carry 1</li>
+                    <li>Tens: 1 + 6 + 8 = 15 → Write 5, carry 1</li>
+                    <li>Hundreds: 1 + 5 + 4 = 10 → Write 0, carry 1</li>
+                    <li>Thousands: 1</li>
+                    <li>Answer: 1056</li>
+                </ol>
+            </div>
+        `,
+        subtraction: `
+            <h2 style="color:#667eea;">Subtraction with Borrowing</h2>
+            <div style="line-height:1.8; font-size:1.1em;">
+                <h3>Example 1: Simple Subtraction (No Borrowing)</h3>
+                <pre style="background:#f8f9fa; padding:15px; border-radius:8px; font-size:1.2em;">
+    68
+  - 23
+  ----
+    45
+                </pre>
+                <p><strong>Steps:</strong></p>
+                <ol>
+                    <li>Subtract ones: 8 - 3 = 5</li>
+                    <li>Subtract tens: 6 - 2 = 4</li>
+                    <li>Answer: 45</li>
+                </ol>
+                
+                <h3 style="margin-top:30px;">Example 2: Subtraction with Borrowing</h3>
+                <pre style="background:#f8f9fa; padding:15px; border-radius:8px; font-size:1.2em;">
+    ⁴¹₂
+    52
+  - 27
+  ----
+    25
+                </pre>
+                <p><strong>Steps:</strong></p>
+                <ol>
+                    <li>Ones: Can't do 2 - 7, so borrow from tens</li>
+                    <li>5 tens becomes 4 tens, 2 ones becomes 12 ones</li>
+                    <li>Now: 12 - 7 = 5</li>
+                    <li>Tens: 4 - 2 = 2</li>
+                    <li>Answer: 25</li>
+                </ol>
+                
+                <h3 style="margin-top:30px;">Example 3: Multiple Borrows</h3>
+                <pre style="background:#f8f9fa; padding:15px; border-radius:8px; font-size:1.2em;">
+    ⁴⁹¹₁₃
+    503
+  - 247
+  -----
+    256
+                </pre>
+                <p><strong>Steps:</strong></p>
+                <ol>
+                    <li>Ones: Can't do 3 - 7, borrow → 13 - 7 = 6</li>
+                    <li>Tens: Can't do -1 - 4, borrow → 9 - 4 = 5</li>
+                    <li>Hundreds: 4 - 2 = 2</li>
+                    <li>Answer: 256</li>
+                </ol>
+            </div>
+        `,
+        multiplication: `
+            <h2 style="color:#667eea;">Multiplication</h2>
+            <div style="line-height:1.8; font-size:1.1em;">
+                <h3>Example 1: Single Digit Multiplication</h3>
+                <pre style="background:#f8f9fa; padding:15px; border-radius:8px; font-size:1.2em;">
+    23
+  ×  4
+  ----
+    92
+                </pre>
+                <p><strong>Steps:</strong></p>
+                <ol>
+                    <li>Multiply ones: 3 × 4 = 12 → Write 2, carry 1</li>
+                    <li>Multiply tens: 2 × 4 = 8, plus carry 1 = 9</li>
+                    <li>Answer: 92</li>
+                </ol>
+                
+                <h3 style="margin-top:30px;">Example 2: Two Digit Multiplication</h3>
+                <pre style="background:#f8f9fa; padding:15px; border-radius:8px; font-size:1.2em;">
+     23
+   × 14
+   ----
+     92  (23 × 4)
+   230  (23 × 10)
+   ----
+    322
+                </pre>
+                <p><strong>Steps:</strong></p>
+                <ol>
+                    <li>Multiply by ones digit (4): 23 × 4 = 92</li>
+                    <li>Multiply by tens digit (1): 23 × 10 = 230</li>
+                    <li>Add the results: 92 + 230 = 322</li>
+                    <li>Answer: 322</li>
+                </ol>
+                
+                <h3 style="margin-top:30px;">Example 3: Larger Numbers</h3>
+                <pre style="background:#f8f9fa; padding:15px; border-radius:8px; font-size:1.2em;">
+      45
+    × 27
+    ----
+     315  (45 × 7)
+    900   (45 × 20)
+    ----
+    1215
+                </pre>
+            </div>
+        `,
+        division: `
+            <h2 style="color:#667eea;">Long Division</h2>
+            <div style="line-height:1.8; font-size:1.1em;">
+                <h3>Example 1: Simple Division</h3>
+                <pre style="background:#f8f9fa; padding:15px; border-radius:8px; font-size:1.2em;">
+      4
+   ------
+  3 | 12
+     -12
+     ---
+       0
+                </pre>
+                <p><strong>Steps:</strong></p>
+                <ol>
+                    <li>How many 3s in 12? Answer: 4</li>
+                    <li>4 × 3 = 12</li>
+                    <li>12 - 12 = 0 (no remainder)</li>
+                    <li>Answer: 4</li>
+                </ol>
+                
+                <h3 style="margin-top:30px;">Example 2: Division with Remainder</h3>
+                <pre style="background:#f8f9fa; padding:15px; border-radius:8px; font-size:1.2em;">
+      7 R1
+   -------
+  3 | 22
+     -21
+     ---
+       1
+                </pre>
+                <p><strong>Steps:</strong></p>
+                <ol>
+                    <li>How many 3s in 22? Answer: 7</li>
+                    <li>7 × 3 = 21</li>
+                    <li>22 - 21 = 1 (remainder)</li>
+                    <li>Answer: 7 remainder 1</li>
+                </ol>
+                
+                <h3 style="margin-top:30px;">Example 3: Two-Digit Division</h3>
+                <pre style="background:#f8f9fa; padding:15px; border-radius:8px; font-size:1.2em;">
+       23
+   --------
+  4 | 92
+     -8↓
+     ---
+      12
+     -12
+     ---
+       0
+                </pre>
+                <p><strong>Steps:</strong></p>
+                <ol>
+                    <li>How many 4s in 9? Answer: 2</li>
+                    <li>2 × 4 = 8, subtract: 9 - 8 = 1</li>
+                    <li>Bring down the 2 → 12</li>
+                    <li>How many 4s in 12? Answer: 3</li>
+                    <li>3 × 4 = 12, subtract: 12 - 12 = 0</li>
+                    <li>Answer: 23</li>
+                </ol>
+            </div>
+        `
+    };
+    
+    document.getElementById('tutorialContent').innerHTML = tutorials[operation];
+}
