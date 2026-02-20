@@ -225,28 +225,55 @@ function checkAnswer() {
     const feedback = document.getElementById('feedback');
     let userAnswer = selectedOption || document.getElementById('answer')?.value.trim();
     
+    // Prevent multiple submissions
+    if (attempts >= questionCount) {
+        return;
+    }
+    
     attempts++;
     
     // Normalize answers for comparison (trim and lowercase)
     const normalizedUser = userAnswer ? userAnswer.toString().trim().toLowerCase() : '';
     const normalizedCorrect = currentAnswer.toString().trim().toLowerCase();
     
+    let isCorrect = false;
+    
     if (currentTopic === 'fractions' && !isNaN(userAnswer) && !isNaN(currentAnswer)) {
         if (Math.abs(parseFloat(userAnswer) - parseFloat(currentAnswer)) < 0.01) {
-            score++;
-            feedback.innerHTML = '✅ Correct! Great job!';
-            feedback.className = 'feedback correct';
-        } else {
-            feedback.innerHTML = `❌ Not quite. The answer is ${currentAnswer}`;
-            feedback.className = 'feedback incorrect';
+            isCorrect = true;
         }
     } else if (normalizedUser === normalizedCorrect) {
+        isCorrect = true;
+    }
+    
+    if (isCorrect) {
         score++;
         feedback.innerHTML = '✅ Correct! Great job!';
         feedback.className = 'feedback correct';
     } else {
-        feedback.innerHTML = `❌ Not quite. The answer is ${currentAnswer}`;
+        feedback.innerHTML = '❌ Not quite. Try the next question!';
         feedback.className = 'feedback incorrect';
+    }
+    
+    // Disable all option buttons to prevent changing answer
+    document.querySelectorAll('.option-btn').forEach(btn => {
+        btn.disabled = true;
+        btn.style.cursor = 'not-allowed';
+        btn.style.opacity = '0.6';
+    });
+    
+    // Disable input field if present
+    const answerInput = document.getElementById('answer');
+    if (answerInput) {
+        answerInput.disabled = true;
+    }
+    
+    // Disable check answer button
+    const submitBtn = document.querySelector('.submit-btn');
+    if (submitBtn) {
+        submitBtn.disabled = true;
+        submitBtn.style.opacity = '0.6';
+        submitBtn.style.cursor = 'not-allowed';
     }
     
     document.getElementById('score').textContent = `Score: ${score}/${totalQuestions}`;
