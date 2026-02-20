@@ -1,10 +1,10 @@
 * { margin: 0; padding: 0; box-sizing: border-box; }
 
 body {
-    font-family: 'Comic Sans MS', cursive, sans-serif;
+    font-family: Arial, Helvetica, sans-serif;
     background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
     min-height: 100vh;
-    padding: 20px;
+    padding: 10px;
 }
 
 .container {
@@ -12,57 +12,66 @@ body {
     margin: 0 auto;
     background: white;
     border-radius: 20px;
-    padding: 30px;
+    padding: 20px;
     box-shadow: 0 10px 40px rgba(0,0,0,0.2);
 }
 
 h1 {
     color: #667eea;
     text-align: center;
-    margin-bottom: 30px;
-    font-size: 2.5em;
+    margin-bottom: 20px;
+    font-size: 2em;
 }
 
 h2 {
     color: #667eea;
     text-align: center;
     margin-bottom: 20px;
+    font-size: 1.5em;
 }
 
 .grade-selector {
     text-align: center;
-    margin-bottom: 30px;
+    margin-bottom: 20px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    justify-content: center;
+    align-items: center;
 }
 
 .grade-selector label {
-    font-size: 1.3em;
+    font-size: 1em;
     color: #333;
-    margin-right: 10px;
+    font-weight: bold;
 }
 
 .grade-selector select {
-    padding: 10px 20px;
-    font-size: 1.1em;
+    padding: 8px 12px;
+    font-size: 1em;
     border: 2px solid #667eea;
     border-radius: 10px;
     cursor: pointer;
+    font-family: Arial, Helvetica, sans-serif;
 }
 
 .subject-buttons {
     display: flex;
-    gap: 20px;
+    gap: 15px;
     justify-content: center;
-    margin-bottom: 30px;
+    margin-bottom: 20px;
+    flex-wrap: wrap;
 }
 
 .subject-btn {
-    padding: 20px 40px;
-    font-size: 1.5em;
+    padding: 15px 30px;
+    font-size: 1.3em;
     border: none;
     border-radius: 15px;
     cursor: pointer;
     transition: transform 0.2s;
     font-weight: bold;
+    font-family: Arial, Helvetica, sans-serif;
 }
 
 .subject-btn:hover { transform: scale(1.05); }
@@ -73,25 +82,26 @@ h2 {
 .topic-options {
     display: none;
     text-align: center;
-    margin-bottom: 30px;
+    margin-bottom: 20px;
 }
 
 .topic-grid {
     display: flex;
     flex-wrap: wrap;
-    gap: 15px;
+    gap: 10px;
     justify-content: center;
 }
 
 .topic-btn {
-    padding: 15px 30px;
-    font-size: 1.2em;
+    padding: 12px 20px;
+    font-size: 1em;
     border: none;
     border-radius: 15px;
     cursor: pointer;
     transition: transform 0.2s;
     font-weight: bold;
     color: white;
+    font-family: Arial, Helvetica, sans-serif;
 }
 
 .topic-btn:hover { transform: scale(1.05); }
@@ -102,54 +112,60 @@ h2 {
 }
 
 .question {
-    font-size: 2em;
+    font-size: 1.5em;
     color: #333;
-    margin: 30px 0;
+    margin: 20px 0;
     min-height: 60px;
     font-family: Arial, Helvetica, sans-serif;
     font-weight: bold;
     font-style: normal;
+    line-height: 1.4;
 }
 
 .answer-input {
-    padding: 15px;
-    font-size: 1.5em;
+    padding: 12px;
+    font-size: 1.2em;
     border: 3px solid #667eea;
     border-radius: 10px;
-    width: 300px;
+    width: 100%;
+    max-width: 300px;
     text-align: center;
+    font-family: Arial, Helvetica, sans-serif;
 }
 
 .submit-btn {
-    padding: 15px 40px;
-    font-size: 1.3em;
+    padding: 12px 30px;
+    font-size: 1.1em;
     background: #51cf66;
     color: white;
     border: none;
     border-radius: 10px;
     cursor: pointer;
-    margin: 20px 10px;
+    margin: 10px 5px;
     font-weight: bold;
+    font-family: Arial, Helvetica, sans-serif;
 }
 
 .submit-btn:hover { background: #40c057; }
 
 .next-btn {
-    padding: 15px 40px;
-    font-size: 1.3em;
+    padding: 12px 30px;
+    font-size: 1.1em;
     background: #667eea;
     color: white;
     border: none;
     border-radius: 10px;
     cursor: pointer;
-    margin: 20px 10px;
+    margin: 10px 5px;
     font-weight: bold;
+    font-family: Arial, Helvetica, sans-serif;
 }
 
 .feedback {
-    font-size: 1.5em;
-    margin: 20px 0;
+    font-size: 1.2em;
+    margin: 15px 0;
     min-height: 40px;
+    font-family: Arial, Helvetica, sans-serif;
 }
 
 .correct { color: #51cf66; }
@@ -157,64 +173,137 @@ h2 {
 
 .score {
     text-align: center;
-    font-size: 1.3em;
+    font-size: 1.1em;
     color: #667eea;
-    margin-top: 20px;
+    margin-top: 15px;
+    font-family: Arial, Helvetica, sans-serif;
+    font-weight: bold;
 }
 
 .back-btn {
     background: #868e96;
     color: white;
-    padding: 10px 20px;
+    padding: 8px 15px;
     border: none;
     border-radius: 10px;
     cursor: pointer;
-    font-size: 1em;
-    margin-right: 10px;
+    font-size: 0.9em;
+    margin-right: 5px;
+    font-family: Arial, Helvetica, sans-serif;
 }
 
 .nav-buttons {
-    margin-bottom: 20px;
+    margin-bottom: 15px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 5px;
+    justify-content: center;
 }
 
 .change-topic-btn {
     background: #5c7cfa;
     color: white;
-    padding: 10px 20px;
+    padding: 8px 15px;
     border: none;
     border-radius: 10px;
     cursor: pointer;
-    font-size: 1em;
-    margin-right: 10px;
+    font-size: 0.9em;
+    margin-right: 5px;
+    font-family: Arial, Helvetica, sans-serif;
 }
 
 .change-subject-btn {
     background: #ff6b6b;
     color: white;
-    padding: 10px 20px;
+    padding: 8px 15px;
     border: none;
     border-radius: 10px;
     cursor: pointer;
-    font-size: 1em;
+    font-size: 0.9em;
+    font-family: Arial, Helvetica, sans-serif;
 }
 
 .options {
     display: flex;
     flex-direction: column;
-    gap: 15px;
+    gap: 10px;
     max-width: 400px;
-    margin: 20px auto;
+    margin: 15px auto;
 }
 
 .option-btn {
-    padding: 15px;
-    font-size: 1.3em;
+    padding: 12px;
+    font-size: 1.1em;
     border: 3px solid #667eea;
     background: white;
     border-radius: 10px;
     cursor: pointer;
     transition: all 0.2s;
+    font-family: Arial, Helvetica, sans-serif;
 }
 
 .option-btn:hover { background: #f0f0f0; }
 .option-btn.selected { background: #667eea; color: white; }
+
+/* Mobile responsiveness */
+@media (max-width: 600px) {
+    body {
+        padding: 5px;
+    }
+    
+    .container {
+        padding: 15px;
+        border-radius: 15px;
+    }
+    
+    h1 {
+        font-size: 1.5em;
+        margin-bottom: 15px;
+    }
+    
+    h2 {
+        font-size: 1.2em;
+    }
+    
+    .grade-selector {
+        font-size: 0.9em;
+    }
+    
+    .grade-selector select {
+        padding: 6px 10px;
+        font-size: 0.9em;
+    }
+    
+    .subject-btn {
+        padding: 12px 20px;
+        font-size: 1.1em;
+    }
+    
+    .topic-btn {
+        padding: 10px 15px;
+        font-size: 0.9em;
+    }
+    
+    .question {
+        font-size: 1.3em;
+        margin: 15px 0;
+    }
+    
+    .answer-input {
+        font-size: 1.1em;
+        padding: 10px;
+    }
+    
+    .submit-btn, .next-btn {
+        padding: 10px 20px;
+        font-size: 1em;
+    }
+    
+    .feedback {
+        font-size: 1.1em;
+    }
+    
+    .score {
+        font-size: 1em;
+    }
+}
