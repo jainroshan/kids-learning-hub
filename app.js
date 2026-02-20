@@ -31,6 +31,17 @@ const englishTopics = {
     reading: { minGrade: 2, maxGrade: 11, label: 'Reading' }
 };
 
+const gkTopics = {
+    animals: { minGrade: 0, maxGrade: 11, label: 'Animals' },
+    geography: { minGrade: 2, maxGrade: 11, label: 'Geography' },
+    science: { minGrade: 2, maxGrade: 11, label: 'Science' },
+    history: { minGrade: 3, maxGrade: 11, label: 'History' },
+    space: { minGrade: 2, maxGrade: 11, label: 'Space' },
+    nature: { minGrade: 1, maxGrade: 11, label: 'Nature' },
+    sports: { minGrade: 2, maxGrade: 11, label: 'Sports' },
+    countries: { minGrade: 3, maxGrade: 11, label: 'Countries' }
+};
+
 document.getElementById('grade').addEventListener('change', (e) => {
     currentGrade = parseInt(e.target.value);
     
@@ -39,6 +50,8 @@ document.getElementById('grade').addEventListener('change', (e) => {
         showTopicMenu('math');
     } else if (document.getElementById('englishOptions').style.display === 'block') {
         showTopicMenu('english');
+    } else if (document.getElementById('gkOptions').style.display === 'block') {
+        showTopicMenu('gk');
     }
 });
 
@@ -60,7 +73,7 @@ function startSubject(subject) {
 }
 
 function showTopicMenu(subject) {
-    const topics = subject === 'math' ? mathTopics : englishTopics;
+    const topics = subject === 'math' ? mathTopics : subject === 'english' ? englishTopics : gkTopics;
     const container = document.getElementById(subject + 'Options');
     const grid = container.querySelector('.topic-grid');
     
@@ -70,7 +83,7 @@ function showTopicMenu(subject) {
         if (currentGrade >= topic.minGrade && currentGrade <= topic.maxGrade) {
             const btn = document.createElement('button');
             btn.className = 'topic-btn';
-            btn.style.background = subject === 'math' ? getMathColor(key) : getEnglishColor(key);
+            btn.style.background = subject === 'math' ? getMathColor(key) : subject === 'english' ? getEnglishColor(key) : getGKColor(key);
             btn.textContent = topic.label;
             btn.onclick = () => startTopic(key);
             grid.appendChild(btn);
@@ -98,6 +111,15 @@ function getEnglishColor(topic) {
     return colors[topic];
 }
 
+function getGKColor(topic) {
+    const colors = {
+        animals: '#f39c12', geography: '#3498db', science: '#9b59b6',
+        history: '#e74c3c', space: '#34495e', nature: '#27ae60',
+        sports: '#e67e22', countries: '#16a085'
+    };
+    return colors[topic];
+}
+
 function startTopic(topic) {
     currentTopic = topic;
     questionCount = 0;
@@ -105,6 +127,7 @@ function startTopic(topic) {
     attempts = 0;
     document.getElementById('mathOptions').style.display = 'none';
     document.getElementById('englishOptions').style.display = 'none';
+    document.getElementById('gkOptions').style.display = 'none';
     document.getElementById('questionArea').style.display = 'block';
     document.getElementById('score').textContent = `Score: 0/${totalQuestions}`;
     updateProgress();
@@ -115,6 +138,7 @@ function goHome() {
     document.getElementById('home').style.display = 'flex';
     document.getElementById('mathOptions').style.display = 'none';
     document.getElementById('englishOptions').style.display = 'none';
+    document.getElementById('gkOptions').style.display = 'none';
     document.getElementById('questionArea').style.display = 'none';
     document.getElementById('feedback').innerHTML = '';
 }
@@ -123,6 +147,7 @@ function changeSubject() {
     document.getElementById('questionArea').style.display = 'none';
     document.getElementById('mathOptions').style.display = 'none';
     document.getElementById('englishOptions').style.display = 'none';
+    document.getElementById('gkOptions').style.display = 'none';
     document.getElementById('home').style.display = 'flex';
 }
 
@@ -144,8 +169,10 @@ function generateQuestion() {
     
     if (currentSubject === 'math') {
         generateMathQuestion();
-    } else {
+    } else if (currentSubject === 'english') {
         generateEnglishQuestion();
+    } else {
+        generateGKQuestion();
     }
 }
 

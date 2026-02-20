@@ -46,6 +46,7 @@
         <div id="home" class="subject-buttons">
             <button class="subject-btn math-btn" onclick="startSubject('math')">🔢 Math</button>
             <button class="subject-btn english-btn" onclick="startSubject('english')">📚 English</button>
+            <button class="subject-btn" style="background:#20bf6b;" onclick="startSubject('gk')">🌍 General Knowledge</button>
         </div>
 
         <div id="mathOptions" class="topic-options">
@@ -57,6 +58,12 @@
         <div id="englishOptions" class="topic-options">
             <button class="back-btn" onclick="goHome()">← Home</button>
             <h2>Choose English Topic:</h2>
+            <div class="topic-grid"></div>
+        </div>
+
+        <div id="gkOptions" class="topic-options">
+            <button class="back-btn" onclick="goHome()">← Home</button>
+            <h2>Choose General Knowledge Topic:</h2>
             <div class="topic-grid"></div>
         </div>
 
@@ -77,5 +84,6 @@
     <script src="app.js"></script>
     <script src="math.js"></script>
     <script src="english.js"></script>
+    <script src="gk.js"></script>
 </body>
 </html>
