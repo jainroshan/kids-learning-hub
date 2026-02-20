@@ -190,7 +190,7 @@ function generateQuestion() {
     selectedOption = null;
     updateProgress();
     
-    // Store current question for history
+    // Store current question for history (will be saved when moving to next)
     window.currentQuestionText = '';
     
     // Show scratch pad for math, hide for others
@@ -205,6 +205,44 @@ function generateQuestion() {
         document.getElementById('scratchPad').style.display = 'none';
         generateGKQuestion();
     }
+}
+
+function saveCurrentAnswer() {
+    // Get user's answer
+    let userAnswer = selectedOption || document.getElementById('answer')?.value.trim();
+    const questionText = document.getElementById('question').textContent;
+    
+    if (!userAnswer) {
+        userAnswer = 'No answer';
+    }
+    
+    // Normalize answers for comparison
+    const normalizedUser = userAnswer ? userAnswer.toString().trim().toLowerCase() : '';
+    const normalizedCorrect = currentAnswer.toString().trim().toLowerCase();
+    
+    let isCorrect = false;
+    
+    if (currentTopic === 'fractions' && !isNaN(userAnswer) && !isNaN(currentAnswer)) {
+        if (Math.abs(parseFloat(userAnswer) - parseFloat(currentAnswer)) < 0.01) {
+            isCorrect = true;
+        }
+    } else if (normalizedUser === normalizedCorrect) {
+        isCorrect = true;
+    }
+    
+    if (isCorrect) {
+        score++;
+    }
+    
+    // Save to history
+    questionHistory.push({
+        question: questionText,
+        userAnswer: userAnswer,
+        correctAnswer: currentAnswer,
+        isCorrect: isCorrect
+    });
+    
+    document.getElementById('score').textContent = `Score: ${score}/${totalQuestions}`;
 }
 
 function updateProgress() {
@@ -258,72 +296,10 @@ function selectOption(option) {
 }
 
 function checkAnswer() {
-    const feedback = document.getElementById('feedback');
-    let userAnswer = selectedOption || document.getElementById('answer')?.value.trim();
-    
-    // Prevent multiple submissions
-    if (attempts >= questionCount) {
-        return;
-    }
-    
-    // Store question text
-    const questionText = document.getElementById('question').textContent;
-    
-    attempts++;
-    
-    // Normalize answers for comparison (trim and lowercase)
-    const normalizedUser = userAnswer ? userAnswer.toString().trim().toLowerCase() : '';
-    const normalizedCorrect = currentAnswer.toString().trim().toLowerCase();
-    
-    let isCorrect = false;
-    
-    if (currentTopic === 'fractions' && !isNaN(userAnswer) && !isNaN(currentAnswer)) {
-        if (Math.abs(parseFloat(userAnswer) - parseFloat(currentAnswer)) < 0.01) {
-            isCorrect = true;
-        }
-    } else if (normalizedUser === normalizedCorrect) {
-        isCorrect = true;
-    }
-    
-    // Save to history
-    questionHistory.push({
-        question: questionText,
-        userAnswer: userAnswer || 'No answer',
-        correctAnswer: currentAnswer,
-        isCorrect: isCorrect
-    });
-    
-    if (isCorrect) {
-        score++;
-        feedback.innerHTML = '✅ Correct! Great job!';
-        feedback.className = 'feedback correct';
-    } else {
-        feedback.innerHTML = '❌ Not quite. Try the next question!';
-        feedback.className = 'feedback incorrect';
-    }
-    
-    // Disable all option buttons to prevent changing answer
-    document.querySelectorAll('.option-btn').forEach(btn => {
-        btn.disabled = true;
-        btn.style.cursor = 'not-allowed';
-        btn.style.opacity = '0.6';
-    });
-    
-    // Disable input field if present
-    const answerInput = document.getElementById('answer');
-    if (answerInput) {
-        answerInput.disabled = true;
-    }
-    
-    // Disable check answer button
-    const submitBtn = document.querySelector('.submit-btn');
-    if (submitBtn) {
-        submitBtn.disabled = true;
-        submitBtn.style.opacity = '0.6';
-        submitBtn.style.cursor = 'not-allowed';
-    }
-    
-    document.getElementById('score').textContent = `Score: ${score}/${totalQuestions}`;
+    // This function is now replaced by saveCurrentAnswer
+    // Called when clicking Next Question
+    saveCurrentAnswer();
+    generateQuestion();
 }
 
 // Scratch pad functionality

@@ -10,13 +10,13 @@ function generateMathQuestion() {
         const num = Math.floor(Math.random() * (difficulty === 'easy' ? 5 : difficulty === 'medium' ? 10 : 15)) + 1;
         q.innerHTML = `Count the stars: ${'⭐'.repeat(num)}`;
         currentAnswer = num.toString();
-        a.innerHTML = '<input type="number" class="answer-input" id="answer" onkeypress="if(event.key===\'Enter\')checkAnswer()"><br><button class="submit-btn" onclick="checkAnswer()">Check Answer</button><button class="next-btn" onclick="generateQuestion()">Next Question</button>';
+        a.innerHTML = '<input type="number" class="answer-input" id="answer" onkeypress="if(event.key==='Enter')checkAnswer()"><br><button class="next-btn" onclick="generateQuestion()">Next Question</button>';
     } else if (currentTopic === 'addition') {
         const n1 = Math.floor(Math.random() * (maxValue - minValue + 1)) + minValue;
         const n2 = Math.floor(Math.random() * (maxValue - minValue + 1)) + minValue;
         q.textContent = `${n1} + ${n2} = ?`;
         currentAnswer = (n1 + n2).toString();
-        a.innerHTML = '<input type="number" class="answer-input" id="answer" onkeypress="if(event.key===\'Enter\')checkAnswer()"><br><button class="submit-btn" onclick="checkAnswer()">Check Answer</button><button class="next-btn" onclick="generateQuestion()">Next Question</button>';
+        a.innerHTML = '<input type="number" class="answer-input" id="answer" onkeypress="if(event.key==='Enter')checkAnswer()"><br><button class="next-btn" onclick="generateQuestion()">Next Question</button>';
     } else if (currentTopic === 'subtraction') {
         const n1 = Math.floor(Math.random() * (maxValue - minValue + 1)) + minValue;
         const n2 = Math.floor(Math.random() * (maxValue - minValue + 1)) + minValue;
@@ -24,20 +24,20 @@ function generateMathQuestion() {
         const smaller = Math.min(n1, n2);
         q.textContent = `${larger} - ${smaller} = ?`;
         currentAnswer = (larger - smaller).toString();
-        a.innerHTML = '<input type="number" class="answer-input" id="answer" onkeypress="if(event.key===\'Enter\')checkAnswer()"><br><button class="submit-btn" onclick="checkAnswer()">Check Answer</button><button class="next-btn" onclick="generateQuestion()">Next Question</button>';
+        a.innerHTML = '<input type="number" class="answer-input" id="answer" onkeypress="if(event.key==='Enter')checkAnswer()"><br><button class="next-btn" onclick="generateQuestion()">Next Question</button>';
     } else if (currentTopic === 'multiplication') {
         const n1 = Math.floor(Math.random() * (maxValue - minValue + 1)) + minValue;
         const n2 = Math.floor(Math.random() * (Math.min(maxValue, 12) - 1 + 1)) + 1;
         q.textContent = `${n1} × ${n2} = ?`;
         currentAnswer = (n1 * n2).toString();
-        a.innerHTML = '<input type="number" class="answer-input" id="answer" onkeypress="if(event.key===\'Enter\')checkAnswer()"><br><button class="submit-btn" onclick="checkAnswer()">Check Answer</button><button class="next-btn" onclick="generateQuestion()">Next Question</button>';
+        a.innerHTML = '<input type="number" class="answer-input" id="answer" onkeypress="if(event.key==='Enter')checkAnswer()"><br><button class="next-btn" onclick="generateQuestion()">Next Question</button>';
     } else if (currentTopic === 'division') {
         const divisor = Math.floor(Math.random() * 11) + 2;
         const quotient = Math.floor(Math.random() * (maxValue - minValue + 1)) + minValue;
         const dividend = divisor * quotient;
         q.textContent = `${dividend} ÷ ${divisor} = ?`;
         currentAnswer = quotient.toString();
-        a.innerHTML = '<input type="number" class="answer-input" id="answer" onkeypress="if(event.key===\'Enter\')checkAnswer()"><br><button class="submit-btn" onclick="checkAnswer()">Check Answer</button><button class="next-btn" onclick="generateQuestion()">Next Question</button>';
+        a.innerHTML = '<input type="number" class="answer-input" id="answer" onkeypress="if(event.key==='Enter')checkAnswer()"><br><button class="next-btn" onclick="generateQuestion()">Next Question</button>';
     } else if (currentTopic === 'fractions') {
         const maxNum = Math.floor((difficulty === 'easy' ? 3 : 5) * (currentGrade / 4));
         const maxDenom = Math.floor((difficulty === 'easy' ? 5 : difficulty === 'medium' ? 8 : 12) * (currentGrade / 4));
@@ -48,7 +48,7 @@ function generateMathQuestion() {
         q.textContent = `${n1}/${d1} + ${n2}/${d2} = ? (as decimal)`;
         const result = (n1 + n2) / d1;
         currentAnswer = result.toFixed(2);
-        a.innerHTML = '<input type="number" step="0.01" class="answer-input" id="answer" onkeypress="if(event.key===\'Enter\')checkAnswer()"><br><button class="submit-btn" onclick="checkAnswer()">Check Answer</button><button class="next-btn" onclick="generateQuestion()">Next Question</button>';
+        a.innerHTML = '<input type="number" step="0.01" class="answer-input" id="answer" onkeypress="if(event.key==='Enter')checkAnswer()"><br><button class="next-btn" onclick="generateQuestion()">Next Question</button>';
     } else if (currentTopic === 'percentages') {
         const maxNum = Math.floor((difficulty === 'easy' ? 50 : difficulty === 'medium' ? 100 : 200) * (currentGrade / 5));
         const num = Math.floor(Math.random() * maxNum) + 10;
@@ -56,7 +56,7 @@ function generateMathQuestion() {
         const pct = pcts[Math.floor(Math.random() * pcts.length)];
         q.textContent = `What is ${pct}% of ${num}?`;
         currentAnswer = (num * pct / 100).toString();
-        a.innerHTML = '<input type="number" class="answer-input" id="answer" onkeypress="if(event.key===\'Enter\')checkAnswer()"><br><button class="submit-btn" onclick="checkAnswer()">Check Answer</button><button class="next-btn" onclick="generateQuestion()">Next Question</button>';
+        a.innerHTML = '<input type="number" class="answer-input" id="answer" onkeypress="if(event.key==='Enter')checkAnswer()"><br><button class="next-btn" onclick="generateQuestion()">Next Question</button>';
     } else if (currentTopic === 'algebra') {
         const maxVal = Math.floor((difficulty === 'easy' ? 10 : difficulty === 'medium' ? 20 : 30) * (currentGrade / 7));
         
@@ -75,6 +75,6 @@ function generateMathQuestion() {
             q.textContent = `Solve for x: x + ${b} = ${c}`;
             currentAnswer = x.toString();
         }
-        a.innerHTML = '<input type="number" class="answer-input" id="answer" onkeypress="if(event.key===\'Enter\')checkAnswer()"><br><button class="submit-btn" onclick="checkAnswer()">Check Answer</button><button class="next-btn" onclick="generateQuestion()">Next Question</button>';
+        a.innerHTML = '<input type="number" class="answer-input" id="answer" onkeypress="if(event.key==='Enter')checkAnswer()"><br><button class="next-btn" onclick="generateQuestion()">Next Question</button>';
     }
 }
