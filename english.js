@@ -43,7 +43,7 @@ function generateEnglishQuestion() {
         const word = words[Math.floor(Math.random() * words.length)];
         q.textContent = `Spell the word: "${word}"`;
         currentAnswer = word;
-        a.innerHTML = '<input type="text" class="answer-input" id="answer" onkeypress="if(event.key===\'Enter\')checkAnswer()"><br><button class="next-btn" onclick="generateQuestion()">Next Question</button>';
+        a.innerHTML = '<input type="text" class="answer-input" id="answer"><br><button class="next-btn" onclick="generateQuestion()">Next Question</button>';
     } else {
         const questions = englishQuestions[currentTopic];
         if (!questions || questions.length === 0) {
