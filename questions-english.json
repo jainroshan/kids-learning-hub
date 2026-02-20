@@ -1,0 +1,74 @@
+{
+  "grammar": [
+    {"q": "Choose the correct verb: She ___ to school.", "opts": ["goes", "go", "going", "went"], "a": "goes"},
+    {"q": "Choose the correct: They ___ playing.", "opts": ["are", "is", "am", "be"], "a": "are"},
+    {"q": "Which is correct: I ___ a student.", "opts": ["am", "is", "are", "be"], "a": "am"},
+    {"q": "Choose correct: He ___ happy.", "opts": ["is", "am", "are", "be"], "a": "is"},
+    {"q": "Choose correct: We ___ friends.", "opts": ["are", "is", "am", "be"], "a": "are"},
+    {"q": "She ___ a book yesterday.", "opts": ["read", "reads", "reading", "readed"], "a": "read"},
+    {"q": "They ___ to the park tomorrow.", "opts": ["will go", "goes", "went", "going"], "a": "will go"},
+    {"q": "I ___ my homework now.", "opts": ["am doing", "do", "did", "does"], "a": "am doing"},
+    {"q": "He ___ soccer every day.", "opts": ["plays", "play", "playing", "played"], "a": "plays"},
+    {"q": "We ___ dinner at 6 PM.", "opts": ["eat", "eats", "eating", "ate"], "a": "eat"}
+  ],
+  "vocabulary": [
+    {"q": "What is a synonym for 'happy'?", "opts": ["joyful", "sad", "angry", "tired"], "a": "joyful"},
+    {"q": "What is an antonym for 'big'?", "opts": ["small", "large", "huge", "giant"], "a": "small"},
+    {"q": "What is a synonym for 'smart'?", "opts": ["intelligent", "dumb", "slow", "lazy"], "a": "intelligent"},
+    {"q": "What is an antonym for 'hot'?", "opts": ["cold", "warm", "burning", "fire"], "a": "cold"},
+    {"q": "What is a synonym for 'fast'?", "opts": ["quick", "slow", "lazy", "tired"], "a": "quick"},
+    {"q": "What is an antonym for 'happy'?", "opts": ["sad", "joyful", "excited", "glad"], "a": "sad"},
+    {"q": "What is a synonym for 'beautiful'?", "opts": ["pretty", "ugly", "plain", "dull"], "a": "pretty"},
+    {"q": "What is an antonym for 'easy'?", "opts": ["difficult", "simple", "basic", "clear"], "a": "difficult"},
+    {"q": "What is a synonym for 'brave'?", "opts": ["courageous", "scared", "afraid", "timid"], "a": "courageous"},
+    {"q": "What is an antonym for 'strong'?", "opts": ["weak", "powerful", "mighty", "tough"], "a": "weak"}
+  ],
+  "nouns": [
+    {"q": "Which is a noun?", "opts": ["table", "run", "quickly", "blue"], "a": "table"},
+    {"q": "Which is a noun?", "opts": ["book", "jump", "slowly", "red"], "a": "book"},
+    {"q": "Which is a noun?", "opts": ["car", "walk", "fast", "green"], "a": "car"},
+    {"q": "Which is a noun?", "opts": ["dog", "sleep", "happy", "big"], "a": "dog"},
+    {"q": "Which is a noun?", "opts": ["house", "eat", "sad", "small"], "a": "house"},
+    {"q": "Which is a noun?", "opts": ["teacher", "teach", "quickly", "tall"], "a": "teacher"},
+    {"q": "Which is a noun?", "opts": ["pencil", "write", "neatly", "sharp"], "a": "pencil"},
+    {"q": "Which is a noun?", "opts": ["school", "learn", "carefully", "new"], "a": "school"},
+    {"q": "Which is a noun?", "opts": ["friend", "play", "happily", "kind"], "a": "friend"},
+    {"q": "Which is a noun?", "opts": ["apple", "eat", "sweetly", "red"], "a": "apple"}
+  ],
+  "verbs": [
+    {"q": "Which is a verb?", "opts": ["run", "table", "quickly", "blue"], "a": "run"},
+    {"q": "Which is a verb?", "opts": ["jump", "book", "slowly", "red"], "a": "jump"},
+    {"q": "Which is a verb?", "opts": ["walk", "car", "fast", "green"], "a": "walk"},
+    {"q": "Which is a verb?", "opts": ["sleep", "dog", "happy", "big"], "a": "sleep"},
+    {"q": "Which is a verb?", "opts": ["eat", "house", "sad", "small"], "a": "eat"},
+    {"q": "Which is a verb?", "opts": ["teach", "teacher", "quickly", "tall"], "a": "teach"},
+    {"q": "Which is a verb?", "opts": ["write", "pencil", "neatly", "sharp"], "a": "write"},
+    {"q": "Which is a verb?", "opts": ["learn", "school", "carefully", "new"], "a": "learn"},
+    {"q": "Which is a verb?", "opts": ["play", "friend", "happily", "kind"], "a": "play"},
+    {"q": "Which is a verb?", "opts": ["sing", "song", "loudly", "beautiful"], "a": "sing"}
+  ],
+  "punctuation": [
+    {"q": "Which sentence is correct?", "opts": ["I am happy.", "I am happy", "i am happy.", "i am happy"], "a": "I am happy."},
+    {"q": "Which sentence is correct?", "opts": ["What is your name?", "What is your name", "what is your name?", "what is your name"], "a": "What is your name?"},
+    {"q": "Which sentence is correct?", "opts": ["Stop!", "Stop", "stop!", "stop"], "a": "Stop!"},
+    {"q": "Which sentence is correct?", "opts": ["She said, 'Hello.'", "She said Hello", "she said, 'Hello.'", "She said 'hello'"], "a": "She said, 'Hello.'"},
+    {"q": "Which sentence is correct?", "opts": ["I like apples, oranges, and bananas.", "I like apples oranges and bananas", "i like apples, oranges, and bananas.", "I like apples oranges, and bananas"], "a": "I like apples, oranges, and bananas."},
+    {"q": "Which sentence is correct?", "opts": ["It's a beautiful day.", "Its a beautiful day", "it's a beautiful day.", "Its a beautiful day."], "a": "It's a beautiful day."},
+    {"q": "Which sentence is correct?", "opts": ["Where are you going?", "Where are you going", "where are you going?", "where are you going"], "a": "Where are you going?"},
+    {"q": "Which sentence is correct?", "opts": ["I can't wait!", "I cant wait", "i can't wait!", "I cant wait!"], "a": "I can't wait!"},
+    {"q": "Which sentence is correct?", "opts": ["My name is John.", "My name is john", "my name is John.", "my name is john"], "a": "My name is John."},
+    {"q": "Which sentence is correct?", "opts": ["Help me, please!", "Help me please", "help me, please!", "Help me please!"], "a": "Help me, please!"}
+  ],
+  "reading": [
+    {"text": "The cat sat on the mat.", "q": "Where did the cat sit?", "opts": ["on the mat", "on the chair", "on the bed", "on the floor"], "a": "on the mat"},
+    {"text": "Tom likes to play soccer.", "q": "What does Tom like to play?", "opts": ["soccer", "basketball", "tennis", "baseball"], "a": "soccer"},
+    {"text": "The sun is bright today.", "q": "How is the sun today?", "opts": ["bright", "dark", "cloudy", "rainy"], "a": "bright"},
+    {"text": "Mary has a red ball.", "q": "What color is Mary's ball?", "opts": ["red", "blue", "green", "yellow"], "a": "red"},
+    {"text": "The dog ran to the park.", "q": "Where did the dog run?", "opts": ["to the park", "to the house", "to the store", "to school"], "a": "to the park"},
+    {"text": "Birds fly in the sky.", "q": "Where do birds fly?", "opts": ["in the sky", "in the water", "on the ground", "in trees"], "a": "in the sky"},
+    {"text": "The book is on the table.", "q": "Where is the book?", "opts": ["on the table", "on the chair", "on the floor", "in the bag"], "a": "on the table"},
+    {"text": "She drinks water every day.", "q": "What does she drink?", "opts": ["water", "juice", "milk", "soda"], "a": "water"},
+    {"text": "The flower is yellow.", "q": "What color is the flower?", "opts": ["yellow", "red", "blue", "pink"], "a": "yellow"},
+    {"text": "He walks to school.", "q": "How does he get to school?", "opts": ["walks", "drives", "flies", "runs"], "a": "walks"}
+  ]
+}
