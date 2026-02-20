@@ -217,13 +217,16 @@ function selectOption(option) {
 
 function checkAnswer() {
     const feedback = document.getElementById('feedback');
-    let userAnswer = selectedOption || document.getElementById('answer')?.value.trim().toLowerCase();
-    const correct = currentAnswer.toLowerCase();
+    let userAnswer = selectedOption || document.getElementById('answer')?.value.trim();
     
     attempts++;
     
-    if (currentTopic === 'fractions' && !isNaN(userAnswer) && !isNaN(correct)) {
-        if (Math.abs(parseFloat(userAnswer) - parseFloat(correct)) < 0.01) {
+    // Normalize answers for comparison (trim and lowercase)
+    const normalizedUser = userAnswer ? userAnswer.toString().trim().toLowerCase() : '';
+    const normalizedCorrect = currentAnswer.toString().trim().toLowerCase();
+    
+    if (currentTopic === 'fractions' && !isNaN(userAnswer) && !isNaN(currentAnswer)) {
+        if (Math.abs(parseFloat(userAnswer) - parseFloat(currentAnswer)) < 0.01) {
             score++;
             feedback.innerHTML = '✅ Correct! Great job!';
             feedback.className = 'feedback correct';
@@ -231,7 +234,7 @@ function checkAnswer() {
             feedback.innerHTML = `❌ Not quite. The answer is ${currentAnswer}`;
             feedback.className = 'feedback incorrect';
         }
-    } else if (userAnswer === correct) {
+    } else if (normalizedUser === normalizedCorrect) {
         score++;
         feedback.innerHTML = '✅ Correct! Great job!';
         feedback.className = 'feedback correct';
