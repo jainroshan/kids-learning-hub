@@ -34,6 +34,7 @@ function generateEnglishQuestion() {
         
         q.textContent = `Which letter is "${letter.toLowerCase()}"?`;
         currentAnswer = letter;
+        window.currentQuestionMeta = { subject: 'english', topic: currentTopic, letter };
         a.innerHTML = '<div class="options">' + shuffled.map(opt => 
             `<button class="option-btn" onclick="selectOption('${opt}')">${opt}</button>`
         ).join('') + '</div><button class="next-btn" onclick="checkAnswer()">Next Question</button>';
@@ -43,6 +44,7 @@ function generateEnglishQuestion() {
         const word = words[Math.floor(Math.random() * words.length)];
         q.textContent = `Spell the word: "${word}"`;
         currentAnswer = word;
+        window.currentQuestionMeta = { subject: 'english', topic: currentTopic, word };
         a.innerHTML = '<input type="text" class="answer-input" id="answer"><br><button class="next-btn" onclick="checkAnswer()">Next Question</button>';
     } else {
     let questions = englishQuestions[currentTopic];
@@ -69,6 +71,7 @@ function generateEnglishQuestion() {
         }
         
         currentAnswer = item.a;
+        window.currentQuestionMeta = { subject: 'english', topic: currentTopic, item };
         a.innerHTML = '<div class="options">' + shuffled.map(opt => 
             `<button class="option-btn" onclick="selectOption('${opt}')">${opt}</button>`
         ).join('') + '</div><button class="next-btn" onclick="checkAnswer()">Next Question</button>';

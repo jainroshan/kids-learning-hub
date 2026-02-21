@@ -15,12 +15,14 @@ function generateMathQuestion() {
         const num = Math.floor(Math.random() * (difficulty === 'easy' ? 5 : difficulty === 'medium' ? 10 : 15)) + 1;
         q.innerHTML = `Count the stars: ${'⭐'.repeat(num)}`;
         currentAnswer = num.toString();
+        window.currentQuestionMeta = { subject: 'math', topic: 'counting', a: num };
         a.innerHTML = '<input type="number" class="answer-input" id="answer"><br><button class="next-btn" onclick="checkAnswer()">Next Question</button>';
     } else if (currentTopic === 'addition') {
         const n1 = Math.floor(Math.random() * (maxValue - minValue + 1)) + minValue;
         const n2 = Math.floor(Math.random() * (maxValue - minValue + 1)) + minValue;
         q.textContent = `${n1} + ${n2} = ?`;
         currentAnswer = (n1 + n2).toString();
+        window.currentQuestionMeta = { subject: 'math', topic: 'addition', a: n1, b: n2 };
         a.innerHTML = '<input type="number" class="answer-input" id="answer"><br><button class="next-btn" onclick="checkAnswer()">Next Question</button>';
     } else if (currentTopic === 'subtraction') {
         const n1 = Math.floor(Math.random() * (maxValue - minValue + 1)) + minValue;
@@ -29,12 +31,14 @@ function generateMathQuestion() {
         const smaller = Math.min(n1, n2);
         q.textContent = `${larger} - ${smaller} = ?`;
         currentAnswer = (larger - smaller).toString();
+        window.currentQuestionMeta = { subject: 'math', topic: 'subtraction', a: larger, b: smaller };
         a.innerHTML = '<input type="number" class="answer-input" id="answer"><br><button class="next-btn" onclick="checkAnswer()">Next Question</button>';
     } else if (currentTopic === 'multiplication') {
         const n1 = Math.floor(Math.random() * (maxValue - minValue + 1)) + minValue;
         const n2 = Math.floor(Math.random() * (Math.min(maxValue, multiplierCap) - 1 + 1)) + 1;
         q.textContent = `${n1} × ${n2} = ?`;
         currentAnswer = (n1 * n2).toString();
+        window.currentQuestionMeta = { subject: 'math', topic: 'multiplication', a: n1, b: n2 };
         a.innerHTML = '<input type="number" class="answer-input" id="answer"><br><button class="next-btn" onclick="checkAnswer()">Next Question</button>';
     } else if (currentTopic === 'division') {
         const divisor = Math.floor(Math.random() * (multiplierCap - 2 + 1)) + 2;
@@ -42,6 +46,7 @@ function generateMathQuestion() {
         const dividend = divisor * quotient;
         q.textContent = `${dividend} ÷ ${divisor} = ?`;
         currentAnswer = quotient.toString();
+        window.currentQuestionMeta = { subject: 'math', topic: 'division', a: dividend, b: divisor };
         a.innerHTML = '<input type="number" class="answer-input" id="answer"><br><button class="next-btn" onclick="checkAnswer()">Next Question</button>';
     } else if (currentTopic === 'fractions') {
         const maxNum = Math.floor((difficulty === 'easy' ? 3 : 5) * (currentGrade / 4));
@@ -53,6 +58,7 @@ function generateMathQuestion() {
         q.textContent = `${n1}/${d1} + ${n2}/${d2} = ? (as decimal)`;
         const result = (n1 + n2) / d1;
         currentAnswer = result.toFixed(2);
+        window.currentQuestionMeta = { subject: 'math', topic: 'fractions', a: n1, b: n2, d: d1 };
         a.innerHTML = '<input type="number" step="0.01" class="answer-input" id="answer"><br><button class="next-btn" onclick="checkAnswer()">Next Question</button>';
     } else if (currentTopic === 'percentages') {
         const maxNum = Math.floor((difficulty === 'easy' ? 50 : difficulty === 'medium' ? 100 : 200) * (currentGrade / 5));
@@ -61,6 +67,7 @@ function generateMathQuestion() {
         const pct = pcts[Math.floor(Math.random() * pcts.length)];
         q.textContent = `What is ${pct}% of ${num}?`;
         currentAnswer = (num * pct / 100).toString();
+        window.currentQuestionMeta = { subject: 'math', topic: 'percentages', a: num, p: pct };
         a.innerHTML = '<input type="number" class="answer-input" id="answer"><br><button class="next-btn" onclick="checkAnswer()">Next Question</button>';
     } else if (currentTopic === 'algebra') {
         const maxVal = Math.floor((difficulty === 'easy' ? 10 : difficulty === 'medium' ? 20 : 30) * (currentGrade / 7));
@@ -73,12 +80,14 @@ function generateMathQuestion() {
             const c = a * x + b;
             q.textContent = `Solve for x: ${a}x + ${b} = ${c}`;
             currentAnswer = x.toString();
+            window.currentQuestionMeta = { subject: 'math', topic: 'algebra', a, b, c };
         } else {
             const x = Math.floor(Math.random() * Math.max(10, maxVal)) + 1;
             const b = Math.floor(Math.random() * Math.max(10, maxVal)) + 1;
             const c = x + b;
             q.textContent = `Solve for x: x + ${b} = ${c}`;
             currentAnswer = x.toString();
+            window.currentQuestionMeta = { subject: 'math', topic: 'algebra', a: 1, b, c };
         }
         a.innerHTML = '<input type="number" class="answer-input" id="answer"><br><button class="next-btn" onclick="checkAnswer()">Next Question</button>';
     }

@@ -46,6 +46,7 @@ function generateGKQuestion() {
     }
     
     currentAnswer = item.a;
+    window.currentQuestionMeta = { subject: 'gk', topic: currentTopic, item };
     a.innerHTML = '<div class="options">' + shuffled.map(opt => 
         `<button class="option-btn" onclick="selectOption('${opt}')">${opt}</button>`
     ).join('') + '</div><button class="next-btn" onclick="checkAnswer()">Next Question</button>';

@@ -334,6 +334,7 @@ function generateQuestion() {
     selectedOption = null;
     updateProgress();
     startTimerIfNeeded();
+    updateHelperText('');
     
     // Store current question for history (will be saved when moving to next)
     window.currentQuestionText = '';
@@ -409,6 +410,7 @@ function saveCurrentAnswer() {
         streak = 0;
     }
     document.getElementById('streak').textContent = `Streak: ${streak}`;
+    animateAnswer(isCorrect);
     
     // Save to history
     questionHistory.push({
@@ -421,6 +423,90 @@ function saveCurrentAnswer() {
     });
     
     console.log('Current score:', score, 'History length:', questionHistory.length);
+}
+
+function showHint() {
+    const hint = buildHint();
+    updateHelperText(hint);
+}
+
+function showExplanation() {
+    const explanation = buildExplanation();
+    updateHelperText(explanation);
+}
+
+function updateHelperText(text) {
+    const el = document.getElementById('helperText');
+    if (el) el.textContent = text || '';
+}
+
+function animateAnswer(isCorrect) {
+    const area = document.getElementById('questionArea');
+    if (!area) return;
+    area.classList.remove('correct-anim', 'incorrect-anim');
+    void area.offsetWidth;
+    area.classList.add(isCorrect ? 'correct-anim' : 'incorrect-anim');
+}
+
+function buildHint() {
+    const meta = window.currentQuestionMeta || {};
+    if (meta.subject === 'math') {
+        if (meta.topic === 'counting') return 'Count the stars one by one. Use your finger to point to each star.';
+        if (meta.topic === 'addition') return 'Start with the bigger number and count up by the smaller one.';
+        if (meta.topic === 'subtraction') return 'Think: what do I remove from the first number to get the answer?';
+        if (meta.topic === 'multiplication') return 'This is repeated addition. Add the first number, second number times.';
+        if (meta.topic === 'division') return 'Try sharing the dividend into equal groups of the divisor.';
+        if (meta.topic === 'fractions') return 'Add the numerators because the denominators match.';
+        if (meta.topic === 'percentages') return '10% is one tenth. Break the percent into easy parts.';
+        if (meta.topic === 'algebra') return 'Undo the operation on x to isolate it.';
+    }
+    if (meta.subject === 'english') {
+        const topic = meta.topic;
+        if (topic === 'nouns') return 'A noun is a person, place, or thing.';
+        if (topic === 'verbs') return 'A verb shows action or state of being.';
+        if (topic === 'grammar') return 'Read the sentence out loud and see what sounds correct.';
+        if (topic === 'punctuation') return 'Look for where a pause or end should be.';
+        if (topic === 'vocabulary') return 'Think of a word with the same or opposite meaning.';
+        if (topic === 'spelling') return 'Say the word slowly and listen for each sound.';
+        if (topic === 'letters') return 'Match the lowercase sound to the uppercase letter.';
+        return 'Eliminate choices that don’t fit the sentence.';
+    }
+    if (meta.subject === 'gk') {
+        const label = getTopicLabel('gk', meta.topic);
+        return `Think about ${label.toLowerCase()} and what you already know.`;
+    }
+    return 'Try breaking the problem into smaller steps.';
+}
+
+function buildExplanation() {
+    const meta = window.currentQuestionMeta || {};
+    if (meta.subject === 'math') {
+        if (meta.topic === 'addition') return `${meta.a} + ${meta.b} = ${meta.a + meta.b}. Add ones, then tens.`;
+        if (meta.topic === 'subtraction') return `${meta.a} - ${meta.b} = ${meta.a - meta.b}. Subtract ones, then tens.`;
+        if (meta.topic === 'multiplication') return `${meta.a} × ${meta.b} = ${meta.a * meta.b}. It means ${meta.a} added ${meta.b} times.`;
+        if (meta.topic === 'division') return `${meta.a} ÷ ${meta.b} = ${Math.floor(meta.a / meta.b)}. Split ${meta.a} into ${meta.b} equal groups.`;
+        if (meta.topic === 'fractions') {
+            const sum = meta.a + meta.b;
+            return `${meta.a}/${meta.d} + ${meta.b}/${meta.d} = ${sum}/${meta.d} = ${(sum / meta.d).toFixed(2)}.`;
+        }
+        if (meta.topic === 'percentages') {
+            return `${meta.p}% of ${meta.a} is ${meta.a} × ${meta.p}/100 = ${(meta.a * meta.p / 100)}`;
+        }
+        if (meta.topic === 'algebra') {
+            if (meta.a === 1) {
+                return `x + ${meta.b} = ${meta.c}. Subtract ${meta.b} from both sides to get x = ${meta.c - meta.b}.`;
+            }
+            return `${meta.a}x + ${meta.b} = ${meta.c}. Subtract ${meta.b}, then divide by ${meta.a}.`;
+        }
+        if (meta.topic === 'counting') return `Count each star: there are ${meta.a}.`;
+    }
+    if (meta.subject === 'english') {
+        return 'Read the sentence carefully and choose the option that makes it correct.';
+    }
+    if (meta.subject === 'gk') {
+        return 'Use facts you already know from school or daily life.';
+    }
+    return '';
 }
 
 function updateProgress() {
