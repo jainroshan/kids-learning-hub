@@ -594,6 +594,72 @@ h2 {
     line-height: 1.4;
 }
 
+.math-problem {
+    display: inline-block;
+    text-align: right;
+    font-family: "Fredoka", sans-serif;
+    font-size: 1.6rem;
+    line-height: 1.4;
+    background: #f7f8ff;
+    padding: 12px 18px;
+    border-radius: 14px;
+    border: 1px solid #e0e3f2;
+    min-width: 180px;
+}
+
+.math-problem .line {
+    border-top: 2px solid #8f95d8;
+    margin: 6px 0 4px;
+}
+
+.math-visual {
+    margin: 10px auto 6px;
+    max-width: 520px;
+    padding: 12px;
+    border-radius: 14px;
+    border: 1px solid #e0e3f2;
+    background: #fff;
+}
+
+.math-visual .visual-title {
+    font-size: 0.9rem;
+    color: #5f6c8a;
+    margin-bottom: 8px;
+    font-weight: 600;
+}
+
+.dot-row.visual {
+    gap: 4px;
+}
+
+.place-value {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(70px, 1fr));
+    gap: 8px;
+}
+
+.pv-col {
+    background: #f7f8ff;
+    border: 1px dashed #c7cbe8;
+    border-radius: 12px;
+    padding: 8px;
+    min-height: 70px;
+}
+
+.pv-label {
+    font-size: 0.75rem;
+    color: #7a86b8;
+    font-weight: 700;
+    text-transform: uppercase;
+    margin-bottom: 6px;
+}
+
+.pv-block {
+    height: 10px;
+    border-radius: 6px;
+    background: #4dabf7;
+    margin-bottom: 4px;
+}
 .helper-row {
     display: flex;
     gap: 10px;

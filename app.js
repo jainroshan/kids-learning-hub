@@ -382,9 +382,13 @@ function generateQuestion() {
         generateMathQuestion();
     } else if (currentSubject === 'english') {
         document.getElementById('scratchPad').style.display = 'none';
+        const visual = document.getElementById('mathVisual');
+        if (visual) visual.style.display = 'none';
         generateEnglishQuestion();
     } else if (currentSubject === 'gk') {
         document.getElementById('scratchPad').style.display = 'none';
+        const visual = document.getElementById('mathVisual');
+        if (visual) visual.style.display = 'none';
         generateGKQuestion();
     }
 }
