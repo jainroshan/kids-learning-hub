@@ -20,6 +20,19 @@ let currentLearnSteps = [];
 const digitControl = document.getElementById('digitControl');
 const learnResume = document.getElementById('learnResume');
 
+function getGradeDigitCap(grade) {
+    if (grade <= 1) return 1;
+    if (grade <= 3) return 2;
+    if (grade <= 5) return 3;
+    return 4;
+}
+
+function getRecommendedDifficulty(grade) {
+    if (grade <= 1) return 'easy';
+    if (grade <= 6) return 'medium';
+    return 'hard';
+}
+
 const mathTopics = {
     counting: { minGrade: 0, maxGrade: 1, label: 'Counting' },
     addition: { minGrade: 1, maxGrade: 11, label: 'Addition', digits: [1, 2, 3, 4] },
@@ -53,8 +66,37 @@ const gkTopics = {
     countries: { minGrade: 3, maxGrade: 11, label: 'Countries' }
 };
 
+function getEligibleTopics(subject) {
+    const topics = subject === 'math' ? mathTopics : subject === 'english' ? englishTopics : gkTopics;
+    const entries = Object.entries(topics).filter(([, topic]) => currentGrade >= topic.minGrade && currentGrade <= topic.maxGrade);
+
+    if (subject === 'english') {
+        if (currentGrade <= 1) return entries.filter(([k]) => ['letters', 'spelling'].includes(k));
+        if (currentGrade <= 3) return entries.filter(([k]) => ['letters', 'spelling', 'nouns', 'verbs', 'reading'].includes(k));
+        if (currentGrade <= 5) return entries.filter(([k]) => ['spelling', 'nouns', 'verbs', 'reading', 'vocabulary', 'punctuation'].includes(k));
+        return entries.filter(([k]) => ['grammar', 'vocabulary', 'reading', 'punctuation'].includes(k));
+    }
+
+    if (subject === 'gk') {
+        if (currentGrade <= 1) return entries.filter(([k]) => ['animals', 'nature'].includes(k));
+        if (currentGrade <= 3) return entries.filter(([k]) => ['animals', 'nature', 'science', 'geography'].includes(k));
+        if (currentGrade <= 5) return entries.filter(([k]) => ['science', 'geography', 'history', 'space'].includes(k));
+        return entries.filter(([k]) => ['history', 'space', 'countries', 'sports', 'science'].includes(k));
+    }
+
+    if (subject === 'math') {
+        if (currentGrade <= 1) {
+            return entries.filter(([k]) => ['counting', 'addition'].includes(k));
+        }
+        return entries;
+    }
+
+    return entries;
+}
+
 document.getElementById('grade').addEventListener('change', (e) => {
     currentGrade = parseInt(e.target.value);
+    applyGradeDefaults();
     
     // Refresh topic menu if currently viewing one
     if (document.getElementById('mathOptions').style.display === 'block') {
@@ -92,6 +134,31 @@ function setDigitVisibility(isVisible) {
     }
 }
 
+function updateDigitOptionsForGrade() {
+    const select = document.getElementById('digitCount');
+    if (!select) return;
+    const cap = getGradeDigitCap(currentGrade);
+    Array.from(select.options).forEach(opt => {
+        const value = parseInt(opt.value, 10);
+        opt.disabled = value > cap;
+        opt.hidden = value > cap;
+    });
+    if (digitCount > cap) {
+        digitCount = cap;
+        select.value = String(cap);
+    }
+}
+
+function applyGradeDefaults() {
+    const recommended = getRecommendedDifficulty(currentGrade);
+    difficulty = recommended;
+    const difficultySelect = document.getElementById('difficulty');
+    if (difficultySelect) {
+        difficultySelect.value = recommended;
+    }
+    updateDigitOptionsForGrade();
+}
+
 function startSubject(subject) {
     currentSubject = subject;
     isQuickStart = false;
@@ -102,6 +169,7 @@ function startSubject(subject) {
     
     document.getElementById('home').style.display = 'none';
     setDigitVisibility(false);
+    updateDigitOptionsForGrade();
     showTopicMenu(subject);
 }
 
@@ -113,6 +181,7 @@ function showTopicMenu(subject) {
     document.getElementById('learnSection').style.display = 'none';
     document.getElementById('tutorialArea').style.display = 'none';
     setDigitVisibility(false);
+    updateDigitOptionsForGrade();
     
     const topics = subject === 'math' ? mathTopics : subject === 'english' ? englishTopics : gkTopics;
     const container = document.getElementById(subject + 'Options');
@@ -120,15 +189,14 @@ function showTopicMenu(subject) {
     
     grid.innerHTML = '';
     
-    for (const [key, topic] of Object.entries(topics)) {
-        if (currentGrade >= topic.minGrade && currentGrade <= topic.maxGrade) {
-            const btn = document.createElement('button');
-            btn.className = 'topic-btn';
-            btn.style.background = subject === 'math' ? getMathColor(key) : subject === 'english' ? getEnglishColor(key) : getGKColor(key);
-            btn.textContent = topic.label;
-            btn.onclick = () => startTopic(key);
-            grid.appendChild(btn);
-        }
+    const eligible = getEligibleTopics(subject);
+    for (const [key, topic] of eligible) {
+        const btn = document.createElement('button');
+        btn.className = 'topic-btn';
+        btn.style.background = subject === 'math' ? getMathColor(key) : subject === 'english' ? getEnglishColor(key) : getGKColor(key);
+        btn.textContent = topic.label;
+        btn.onclick = () => startTopic(key);
+        grid.appendChild(btn);
     }
     
     container.style.display = 'block';
@@ -178,6 +246,7 @@ function startTopic(topic) {
     if (currentSubject === 'math') {
         const hasDigits = !!mathTopics[currentTopic]?.digits;
         setDigitVisibility(hasDigits);
+        updateDigitOptionsForGrade();
     } else {
         setDigitVisibility(false);
     }
@@ -482,15 +551,11 @@ function toggleScratchPad() {
 
 function pickQuickStartTarget() {
     const topics = [];
-    for (const [key, topic] of Object.entries(mathTopics)) {
-        if (currentGrade >= topic.minGrade && currentGrade <= topic.maxGrade) {
-            topics.push({ subject: 'math', topic: key, weight: 1.1 });
-        }
+    for (const [key] of getEligibleTopics('math')) {
+        topics.push({ subject: 'math', topic: key, weight: 1.1 });
     }
-    for (const [key, topic] of Object.entries(englishTopics)) {
-        if (currentGrade >= topic.minGrade && currentGrade <= topic.maxGrade) {
-            topics.push({ subject: 'english', topic: key, weight: 1 });
-        }
+    for (const [key] of getEligibleTopics('english')) {
+        topics.push({ subject: 'english', topic: key, weight: 1 });
     }
 
     if (topics.length === 0) {
@@ -540,6 +605,7 @@ function getTopicLabel(subject, topic) {
 // Initialize scratch pad when page loads
 window.addEventListener('load', initScratchPad);
 setDigitVisibility(false);
+applyGradeDefaults();
 
 function showLearnSection() {
     document.getElementById('home').style.display = 'none';

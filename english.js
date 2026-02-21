@@ -45,12 +45,19 @@ function generateEnglishQuestion() {
         currentAnswer = word;
         a.innerHTML = '<input type="text" class="answer-input" id="answer"><br><button class="next-btn" onclick="checkAnswer()">Next Question</button>';
     } else {
-        const questions = englishQuestions[currentTopic];
-        if (!questions || questions.length === 0) {
-            q.textContent = 'Loading questions...';
-            a.innerHTML = '';
-            return;
-        }
+    let questions = englishQuestions[currentTopic];
+    if (!questions || questions.length === 0) {
+        q.textContent = 'Loading questions...';
+        a.innerHTML = '';
+        return;
+    }
+
+    questions = filterQuestionsByGrade(questions);
+    if (questions.length === 0) {
+        q.textContent = 'Loading questions...';
+        a.innerHTML = '';
+        return;
+    }
         
         const item = questions[Math.floor(Math.random() * questions.length)];
         const shuffled = shuffleArray([...item.opts]);
@@ -66,4 +73,20 @@ function generateEnglishQuestion() {
             `<button class="option-btn" onclick="selectOption('${opt}')">${opt}</button>`
         ).join('') + '</div><button class="next-btn" onclick="checkAnswer()">Next Question</button>';
     }
+}
+
+function filterQuestionsByGrade(questions) {
+    if (!Array.isArray(questions) || questions.length === 0) return [];
+    const grade = typeof currentGrade === 'number' ? currentGrade : 2;
+    const quarter = Math.max(1, Math.floor(questions.length / 4));
+    if (grade <= 1) {
+        return questions.slice(0, quarter);
+    }
+    if (grade <= 3) {
+        return questions.slice(quarter, quarter * 2);
+    }
+    if (grade <= 5) {
+        return questions.slice(quarter * 2, quarter * 3);
+    }
+    return questions.slice(quarter * 3);
 }

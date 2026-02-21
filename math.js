@@ -2,9 +2,14 @@ function generateMathQuestion() {
     const q = document.getElementById('question');
     const a = document.getElementById('answerSection');
     
-    // Calculate max value based on digit count
-    const maxValue = Math.pow(10, digitCount) - 1;
-    const minValue = digitCount === 1 ? 1 : Math.pow(10, digitCount - 1);
+    const gradeCap = typeof getGradeDigitCap === 'function' ? getGradeDigitCap(currentGrade) : digitCount;
+    const effectiveDigits = Math.max(1, Math.min(digitCount, gradeCap));
+    
+    // Calculate max value based on digit count and grade cap
+    const maxValue = Math.pow(10, effectiveDigits) - 1;
+    const minValue = effectiveDigits === 1 ? 1 : Math.pow(10, effectiveDigits - 1);
+    
+    const multiplierCap = currentGrade <= 3 ? 6 : currentGrade <= 6 ? 9 : 12;
     
     if (currentTopic === 'counting') {
         const num = Math.floor(Math.random() * (difficulty === 'easy' ? 5 : difficulty === 'medium' ? 10 : 15)) + 1;
@@ -27,12 +32,12 @@ function generateMathQuestion() {
         a.innerHTML = '<input type="number" class="answer-input" id="answer"><br><button class="next-btn" onclick="checkAnswer()">Next Question</button>';
     } else if (currentTopic === 'multiplication') {
         const n1 = Math.floor(Math.random() * (maxValue - minValue + 1)) + minValue;
-        const n2 = Math.floor(Math.random() * (Math.min(maxValue, 12) - 1 + 1)) + 1;
+        const n2 = Math.floor(Math.random() * (Math.min(maxValue, multiplierCap) - 1 + 1)) + 1;
         q.textContent = `${n1} × ${n2} = ?`;
         currentAnswer = (n1 * n2).toString();
         a.innerHTML = '<input type="number" class="answer-input" id="answer"><br><button class="next-btn" onclick="checkAnswer()">Next Question</button>';
     } else if (currentTopic === 'division') {
-        const divisor = Math.floor(Math.random() * 11) + 2;
+        const divisor = Math.floor(Math.random() * (multiplierCap - 2 + 1)) + 2;
         const quotient = Math.floor(Math.random() * (maxValue - minValue + 1)) + minValue;
         const dividend = divisor * quotient;
         q.textContent = `${dividend} ÷ ${divisor} = ?`;
