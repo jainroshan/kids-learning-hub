@@ -23,6 +23,8 @@ let quizMode = 'practice';
 let timerInterval = null;
 let timeLeft = 0;
 let feedbackVoiceEnabled = true;
+let currentStepList = [];
+let currentStepIndex = 0;
 const digitControl = document.getElementById('digitControl');
 const learnResume = document.getElementById('learnResume');
 const badgeShelf = document.getElementById('badgeShelf');
@@ -344,6 +346,8 @@ function generateQuestion() {
     updateProgress();
     startTimerIfNeeded();
     updateHelperText('');
+    currentStepList = [];
+    currentStepIndex = 0;
     renderVoiceToggle();
     
     // Store current question for history (will be saved when moving to next)
@@ -447,13 +451,19 @@ function showExplanation() {
 }
 
 function showSteps() {
-    const steps = buildSteps();
-    updateHelperText(steps);
+    currentStepList = buildStepList();
+    currentStepIndex = 0;
+    renderStepHelper();
 }
 
 function updateHelperText(text) {
     const el = document.getElementById('helperText');
     if (el) el.textContent = text || '';
+}
+
+function updateHelperHtml(html) {
+    const el = document.getElementById('helperText');
+    if (el) el.innerHTML = html || '';
 }
 
 function animateAnswer(isCorrect) {
@@ -551,6 +561,107 @@ function buildSteps() {
         }
     }
     return 'Read the question carefully and solve step by step.';
+}
+
+function buildStepList() {
+    const meta = window.currentQuestionMeta || {};
+    if (meta.subject === 'math') {
+        if (meta.topic === 'addition') {
+            return [
+                `Add ones: ${meta.a % 10} + ${meta.b % 10}.`,
+                `Add tens: ${Math.floor(meta.a / 10)} + ${Math.floor(meta.b / 10)}.`,
+                `Combine to get ${meta.a + meta.b}.`
+            ];
+        }
+        if (meta.topic === 'subtraction') {
+            return [
+                `Subtract ones. Borrow if needed.`,
+                `Subtract tens.`,
+                `Answer is ${meta.a - meta.b}.`
+            ];
+        }
+        if (meta.topic === 'multiplication') {
+            return [
+                `Think of ${meta.a} groups of ${meta.b}.`,
+                `Multiply: ${meta.a} × ${meta.b}.`,
+                `Answer is ${meta.a * meta.b}.`
+            ];
+        }
+        if (meta.topic === 'division') {
+            return [
+                `Split ${meta.a} into groups of ${meta.b}.`,
+                `Count how many groups fit.`,
+                `Answer is ${Math.floor(meta.a / meta.b)}.`
+            ];
+        }
+        if (meta.topic === 'fractions') {
+            const sum = meta.a + meta.b;
+            return [
+                `Add numerators: ${meta.a} + ${meta.b} = ${sum}.`,
+                `Keep denominator: ${meta.d}.`,
+                `Decimal: ${(sum / meta.d).toFixed(2)}.`
+            ];
+        }
+        if (meta.topic === 'percentages') {
+            return [
+                `Convert ${meta.p}% to decimal: ${meta.p}/100.`,
+                `Multiply: ${meta.a} × ${meta.p}/100.`,
+                `Answer is ${meta.a * meta.p / 100}.`
+            ];
+        }
+        if (meta.topic === 'algebra') {
+            if (meta.a === 1) {
+                return [
+                    `Subtract ${meta.b} from both sides.`,
+                    `x = ${meta.c} - ${meta.b}.`,
+                    `Answer is ${meta.c - meta.b}.`
+                ];
+            }
+            return [
+                `Subtract ${meta.b} from both sides.`,
+                `Divide both sides by ${meta.a}.`,
+                `Answer is ${(meta.c - meta.b) / meta.a}.`
+            ];
+        }
+        if (meta.topic === 'counting') {
+            return [
+                `Point to each star and count.`,
+                `Say the numbers out loud.`,
+                `Answer is ${meta.a}.`
+            ];
+        }
+    }
+    return [
+        `Read the question carefully.`,
+        `Remove choices that don't fit.`,
+        `Pick the best answer.`
+    ];
+}
+
+function renderStepHelper() {
+    if (!currentStepList || currentStepList.length === 0) {
+        updateHelperText('Try breaking the problem into smaller steps.');
+        return;
+    }
+    const step = currentStepList[currentStepIndex];
+    const nextLabel = currentStepIndex < currentStepList.length - 1 ? 'Next Step' : 'Start Over';
+    const counter = `<span class="step-chip">Step ${currentStepIndex + 1}/${currentStepList.length}</span>`;
+    const actions = `
+        <div class="step-actions">
+            <button class="helper-btn" onclick="nextStep()">${nextLabel}</button>
+            <button class="helper-btn" onclick="showHint()">Hint</button>
+        </div>`;
+    updateHelperHtml(`${counter}<div style="margin-top:6px;">${step}</div>${actions}`);
+}
+
+function nextStep() {
+    if (!currentStepList || currentStepList.length === 0) return;
+    if (currentStepIndex < currentStepList.length - 1) {
+        currentStepIndex += 1;
+    } else {
+        currentStepIndex = 0;
+    }
+    renderStepHelper();
 }
 
 function renderVoiceToggle() {

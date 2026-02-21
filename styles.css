@@ -627,6 +627,23 @@ h2 {
     min-height: 24px;
 }
 
+.step-chip {
+    display: inline-flex;
+    padding: 4px 8px;
+    border-radius: 999px;
+    background: rgba(79, 116, 255, 0.12);
+    color: #3d4fd3;
+    font-size: 0.75rem;
+    font-weight: 700;
+}
+
+.step-actions {
+    display: flex;
+    gap: 8px;
+    margin-top: 8px;
+    flex-wrap: wrap;
+}
+
 .question-area.correct-anim {
     animation: pulseCorrect 0.4s ease;
 }
