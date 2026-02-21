@@ -477,13 +477,17 @@ function checkAnswer() {
 // Scratch pad functionality
 let isDrawing = false;
 let scratchCtx = null;
+let scratchTool = 'pen';
+let scratchColor = '#333';
+let scratchSize = 4;
+let scratchGridOn = false;
 
 function initScratchPad() {
     const canvas = document.getElementById('scratchCanvas');
     scratchCtx = canvas.getContext('2d');
-    scratchCtx.lineWidth = 2;
+    scratchCtx.lineWidth = scratchSize;
     scratchCtx.lineCap = 'round';
-    scratchCtx.strokeStyle = '#333';
+    scratchCtx.strokeStyle = scratchColor;
     
     // Mouse events
     canvas.addEventListener('mousedown', startDrawing);
@@ -500,6 +504,8 @@ function initScratchPad() {
 function startDrawing(e) {
     isDrawing = true;
     const rect = e.target.getBoundingClientRect();
+    scratchCtx.lineWidth = scratchSize;
+    scratchCtx.strokeStyle = scratchTool === 'eraser' ? '#ffffff' : scratchColor;
     scratchCtx.beginPath();
     scratchCtx.moveTo(e.clientX - rect.left, e.clientY - rect.top);
 }
@@ -522,6 +528,8 @@ function handleTouch(e) {
     
     if (e.type === 'touchstart') {
         isDrawing = true;
+        scratchCtx.lineWidth = scratchSize;
+        scratchCtx.strokeStyle = scratchTool === 'eraser' ? '#ffffff' : scratchColor;
         scratchCtx.beginPath();
         scratchCtx.moveTo(touch.clientX - rect.left, touch.clientY - rect.top);
     } else if (e.type === 'touchmove' && isDrawing) {
@@ -534,6 +542,9 @@ function clearScratchPad() {
     if (scratchCtx) {
         const canvas = document.getElementById('scratchCanvas');
         scratchCtx.clearRect(0, 0, canvas.width, canvas.height);
+        if (scratchGridOn) {
+            drawScratchGrid();
+        }
     }
 }
 
@@ -547,6 +558,61 @@ function toggleScratchPad() {
         pad.style.display = 'none';
         btn.textContent = 'Show Scratch Pad';
     }
+}
+
+function setScratchTool(tool) {
+    scratchTool = tool;
+    document.querySelectorAll('.scratch-controls button').forEach(btn => btn.classList.remove('active'));
+    const buttons = Array.from(document.querySelectorAll('.scratch-controls button'));
+    const target = buttons.find(btn => btn.textContent.toLowerCase() === tool);
+    if (target) target.classList.add('active');
+}
+
+function setScratchColor(color) {
+    scratchColor = color;
+    document.querySelectorAll('.color-dot').forEach(dot => dot.classList.remove('active'));
+    const dots = Array.from(document.querySelectorAll('.color-dot'));
+    const target = dots.find(dot => dot.style.background === color);
+    if (target) target.classList.add('active');
+}
+
+function toggleScratchGrid() {
+    scratchGridOn = !scratchGridOn;
+    if (scratchGridOn) {
+        drawScratchGrid();
+    } else {
+        clearScratchPad();
+    }
+}
+
+function drawScratchGrid() {
+    const canvas = document.getElementById('scratchCanvas');
+    const ctx = scratchCtx;
+    if (!ctx) return;
+    ctx.save();
+    ctx.strokeStyle = '#e9ecff';
+    ctx.lineWidth = 1;
+    const step = 20;
+    for (let x = 0; x <= canvas.width; x += step) {
+        ctx.beginPath();
+        ctx.moveTo(x, 0);
+        ctx.lineTo(x, canvas.height);
+        ctx.stroke();
+    }
+    for (let y = 0; y <= canvas.height; y += step) {
+        ctx.beginPath();
+        ctx.moveTo(0, y);
+        ctx.lineTo(canvas.width, y);
+        ctx.stroke();
+    }
+    ctx.restore();
+}
+
+const scratchSizeInput = document.getElementById('scratchSize');
+if (scratchSizeInput) {
+    scratchSizeInput.addEventListener('input', () => {
+        scratchSize = parseInt(scratchSizeInput.value, 10);
+    });
 }
 
 function pickQuickStartTarget() {

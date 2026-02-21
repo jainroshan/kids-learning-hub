@@ -705,6 +705,48 @@ h2 {
     font-weight: 600;
 }
 
+.scratch-controls button.active {
+    background: #1c7ed6;
+}
+
+.scratch-label {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 6px 12px;
+    background: white;
+    border-radius: 999px;
+    border: 1px solid #e0e3f2;
+    font-size: 0.85em;
+    color: #4b5563;
+    font-weight: 600;
+}
+
+.scratch-label input[type="range"] {
+    width: 80px;
+}
+
+.scratch-colors {
+    display: inline-flex;
+    gap: 8px;
+    padding: 6px 10px;
+    background: white;
+    border-radius: 999px;
+    border: 1px solid #e0e3f2;
+}
+
+.color-dot {
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    border: 2px solid white;
+    box-shadow: 0 0 0 1px rgba(0,0,0,0.15);
+}
+
+.color-dot.active {
+    box-shadow: 0 0 0 2px rgba(0,0,0,0.25);
+}
+
 @keyframes fadeUp {
     from { opacity: 0; transform: translateY(10px); }
     to { opacity: 1; transform: translateY(0); }
