@@ -1251,9 +1251,9 @@ function buildLearnContent(operation) {
             controls: `
                 <div class="learn-controls">
                     <label>Table of: <span id="tableBaseVal">5</span></label>
-                    <input id="tableBase" type="range" min="2" max="12" value="5">
+                    <input id="tableBase" type="range" min="1" max="30" value="5">
                     <label>Up to: <span id="tableMaxVal">10</span></label>
-                    <input id="tableMax" type="range" min="5" max="12" value="10">
+                    <input id="tableMax" type="range" min="5" max="30" value="10">
                 </div>
             `,
             steps: [
@@ -1630,8 +1630,8 @@ function buildChallenge(operation) {
     }
     if (operation === 'tables') {
         const saved = loadLearnState('tables') || { base: 5, max: 10 };
-        const base = parseInt(saved.base, 10);
-        const max = parseInt(saved.max, 10);
+        const base = Math.min(30, Math.max(1, parseInt(saved.base, 10)));
+        const max = Math.min(30, Math.max(5, parseInt(saved.max, 10)));
         const n = randInt(1, max);
         return { question: `What is ${base} × ${n}?`, answer: base * n, type: 'number' };
     }
