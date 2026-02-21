@@ -212,6 +212,12 @@ h2 {
 .gk-card { border-left: 6px solid #ffd43b; }
 .learn-card { border-left: 6px solid #74c0fc; }
 .quick-card { border-left: 6px solid #ffa94d; }
+.math-mode-grid { margin-top: 6px; }
+.math-mode-card {
+    background: linear-gradient(180deg, #ffffff, #f1f6ff);
+    border-left: 6px solid #4dabf7;
+}
+.math-mode-card .subject-title { font-size: 1.4rem; }
 
 .topic-options {
     display: none;

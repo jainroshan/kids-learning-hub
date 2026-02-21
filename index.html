@@ -87,11 +87,6 @@
                 <div class="subject-title">Quick Start</div>
                 <div class="subject-desc">Mixed questions across subjects</div>
             </button>
-            <button class="subject-card learn-card" onclick="showLearnSection()">
-                <div class="subject-icon">📖</div>
-                <div class="subject-title">Learn Math</div>
-                <div class="subject-desc">Step-by-step tutorials</div>
-            </button>
         </div>
 
         <div id="mathMode" class="topic-options">
@@ -100,9 +95,17 @@
                 <h2>Math</h2>
             </div>
             <p class="section-subtitle">Choose how you want to learn.</p>
-            <div class="topic-grid">
-                <button class="topic-btn" style="background:#ff8787;" onclick="startMathPractice()">Practice</button>
-                <button class="topic-btn" style="background:#74c0fc;" onclick="showLearnSection()">Learn</button>
+            <div class="subject-grid math-mode-grid">
+                <button class="subject-card math-mode-card" onclick="startMathPractice()">
+                    <div class="subject-icon">🧮</div>
+                    <div class="subject-title">Practice</div>
+                    <div class="subject-desc">Questions with hints and tools</div>
+                </button>
+                <button class="subject-card math-mode-card" onclick="showLearnSection()">
+                    <div class="subject-icon">📘</div>
+                    <div class="subject-title">Learn</div>
+                    <div class="subject-desc">Interactive lessons and tables</div>
+                </button>
             </div>
         </div>
         
