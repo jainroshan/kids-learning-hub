@@ -193,9 +193,17 @@ function startSubject(subject) {
     attempts = 0;
     
     document.getElementById('home').style.display = 'none';
+    document.getElementById('mathMode').style.display = 'none';
+    showControls(false);
     setDigitVisibility(false);
     updateDigitOptionsForGrade();
-    showTopicMenu(subject);
+
+    if (subject === 'math') {
+        document.getElementById('mathMode').style.display = 'block';
+    } else {
+        showControls(true);
+        showTopicMenu(subject);
+    }
 }
 
 function showTopicMenu(subject) {
@@ -205,6 +213,7 @@ function showTopicMenu(subject) {
     document.getElementById('gkOptions').style.display = 'none';
     document.getElementById('learnSection').style.display = 'none';
     document.getElementById('tutorialArea').style.display = 'none';
+    document.getElementById('mathMode').style.display = 'none';
     setDigitVisibility(false);
     updateDigitOptionsForGrade();
     
@@ -271,6 +280,7 @@ function startTopic(topic) {
     document.getElementById('questionArea').style.display = 'block';
     document.getElementById('score').textContent = `Score: 0/${totalQuestions}`;
     document.getElementById('streak').textContent = `Streak: 0`;
+    showControls(true);
     if (currentSubject === 'math') {
         const hasDigits = !!mathTopics[currentTopic]?.digits;
         setDigitVisibility(hasDigits);
@@ -289,10 +299,12 @@ function goHome() {
     document.getElementById('gkOptions').style.display = 'none';
     document.getElementById('learnSection').style.display = 'none';
     document.getElementById('tutorialArea').style.display = 'none';
+    document.getElementById('mathMode').style.display = 'none';
     document.getElementById('questionArea').style.display = 'none';
     document.getElementById('feedback').innerHTML = '';
     stopTimer();
     setDigitVisibility(false);
+    showControls(false);
     renderBadgeShelf();
 }
 
@@ -303,16 +315,31 @@ function changeSubject() {
     document.getElementById('gkOptions').style.display = 'none';
     document.getElementById('learnSection').style.display = 'none';
     document.getElementById('tutorialArea').style.display = 'none';
+    document.getElementById('mathMode').style.display = 'none';
     document.getElementById('home').style.display = 'grid';
     stopTimer();
     setDigitVisibility(false);
+    showControls(false);
     renderBadgeShelf();
 }
 
 function changeTopic() {
     document.getElementById('questionArea').style.display = 'none';
     stopTimer();
+    showControls(true);
     showTopicMenu(currentSubject);
+}
+
+function showControls(show) {
+    const controls = document.getElementById('controls');
+    if (controls) controls.style.display = show ? 'grid' : 'none';
+}
+
+function startMathPractice() {
+    showControls(true);
+    setDigitVisibility(true);
+    updateDigitOptionsForGrade();
+    showTopicMenu('math');
 }
 
 function startQuickStart() {
@@ -328,6 +355,8 @@ function startQuickStart() {
     attempts = 0;
     questionHistory = [];
     document.getElementById('home').style.display = 'none';
+    showControls(true);
+    setDigitVisibility(false);
     document.getElementById('questionArea').style.display = 'block';
     document.getElementById('score').textContent = `Score: 0/${totalQuestions}`;
     document.getElementById('streak').textContent = `Streak: 0`;
@@ -1111,7 +1140,9 @@ function showLearnSection() {
     document.getElementById('home').style.display = 'none';
     document.getElementById('learnSection').style.display = 'block';
     document.getElementById('tutorialArea').style.display = 'none';
+    document.getElementById('mathMode').style.display = 'none';
     setDigitVisibility(false);
+    showControls(false);
     renderLearnResume();
     updateLearnMasteryBadges();
 }
