@@ -1889,13 +1889,18 @@ function renderBorrow() {
     const bottomInput = document.getElementById('borrowBottom');
     const out = document.getElementById('borrowVisual');
     if (!topInput || !bottomInput || !out) return;
-    let top = clampMultiDigit(parseInt(topInput.value, 10));
-    let bottom = clampMultiDigit(parseInt(bottomInput.value, 10));
+    let topRaw = parseInt(topInput.value, 10);
+    let bottomRaw = parseInt(bottomInput.value, 10);
+    if (isNaN(topRaw)) topRaw = 10;
+    if (isNaN(bottomRaw)) bottomRaw = 10;
+    const top = clampMultiDigit(topRaw);
+    const bottom = clampMultiDigit(bottomRaw);
+    if (topRaw !== top) topInput.value = top;
+    if (bottomRaw !== bottom) bottomInput.value = bottom;
     if (bottom > top) {
-        bottom = Math.max(10, top - 1);
+        out.innerHTML = `<div class="carry-visual">Bottom should be smaller than top to borrow. Please adjust.</div>`;
+        return;
     }
-    topInput.value = top;
-    bottomInput.value = bottom;
     const { borrowRow, result, steps } = subtractWithBorrow(top, bottom);
     const width = Math.max(String(top).length, String(bottom).length, String(result).length);
     out.innerHTML = `
