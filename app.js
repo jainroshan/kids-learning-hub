@@ -25,6 +25,8 @@ let timeLeft = 0;
 let feedbackVoiceEnabled = true;
 let currentStepList = [];
 let currentStepIndex = 0;
+let visualAidVisible = true;
+let scratchVisible = true;
 const digitControl = document.getElementById('digitControl');
 const learnResume = document.getElementById('learnResume');
 const badgeShelf = document.getElementById('badgeShelf');
@@ -377,8 +379,11 @@ function generateQuestion() {
 
     // Show scratch pad for math, hide for others
     if (currentSubject === 'math') {
-        document.getElementById('scratchPad').style.display = 'block';
-        clearScratchPad();
+        const pad = document.getElementById('scratchPad');
+        if (pad) {
+            pad.style.display = scratchVisible ? 'block' : 'none';
+            if (scratchVisible) clearScratchPad();
+        }
         generateMathQuestion();
     } else if (currentSubject === 'english') {
         document.getElementById('scratchPad').style.display = 'none';
@@ -391,6 +396,8 @@ function generateQuestion() {
         if (visual) visual.style.display = 'none';
         generateGKQuestion();
     }
+
+    syncVisualAndScratch();
 }
 
 function saveCurrentAnswer() {
@@ -896,13 +903,41 @@ function clearScratchPad() {
 
 function toggleScratchPad() {
     const pad = document.getElementById('scratchPad');
-    const btn = event.target;
     if (pad.style.display === 'none') {
         pad.style.display = 'block';
-        btn.textContent = 'Hide';
+        scratchVisible = true;
     } else {
         pad.style.display = 'none';
-        btn.textContent = 'Show Scratch Pad';
+        scratchVisible = false;
+    }
+    localStorage.setItem('scratchVisible', String(scratchVisible));
+    syncVisualAndScratch();
+}
+
+function toggleVisualAid() {
+    visualAidVisible = !visualAidVisible;
+    localStorage.setItem('visualAidVisible', String(visualAidVisible));
+    syncVisualAndScratch();
+}
+
+function syncVisualAndScratch() {
+    const visual = document.getElementById('mathVisual');
+    const visualBtn = document.getElementById('toggleVisualBtn');
+    const scratchBtn = document.getElementById('toggleScratchBtn');
+    if (visual) {
+        if (currentSubject === 'math' && visualAidVisible) {
+            visual.style.display = 'block';
+        } else {
+            visual.style.display = 'none';
+        }
+    }
+    if (visualBtn) {
+        visualBtn.textContent = visualAidVisible ? 'Hide Visual Aid' : 'Show Visual Aid';
+    }
+    const pad = document.getElementById('scratchPad');
+    if (pad && scratchBtn) {
+        const visible = pad.style.display !== 'none';
+        scratchBtn.textContent = visible ? 'Hide Scratch Pad' : 'Show Scratch Pad';
     }
 }
 
@@ -1067,6 +1102,10 @@ window.addEventListener('load', initScratchPad);
 setDigitVisibility(false);
 applyGradeDefaults();
 renderBadgeShelf();
+const savedVisual = localStorage.getItem('visualAidVisible');
+const savedScratch = localStorage.getItem('scratchVisible');
+if (savedVisual !== null) visualAidVisible = savedVisual === 'true';
+if (savedScratch !== null) scratchVisible = savedScratch === 'true';
 
 function showLearnSection() {
     document.getElementById('home').style.display = 'none';
