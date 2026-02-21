@@ -121,18 +121,28 @@
         <div id="learnSection" class="topic-options">
             <div class="section-header">
                 <button class="back-btn" onclick="goHome()">← Home</button>
-                <h2>Learn Math Operations</h2>
+                <h2>Learn Math Your Way</h2>
             </div>
+            <p class="section-subtitle">Pick a skill to explore with visuals and steps.</p>
+            <div id="learnResume" class="learn-resume" style="display:none;"></div>
             <div class="topic-grid">
-                <button class="topic-btn" style="background:#ff8787;" onclick="showLearnTutorial('addition')">Addition</button>
-                <button class="topic-btn" style="background:#ffa94d;" onclick="showLearnTutorial('subtraction')">Subtraction</button>
-                <button class="topic-btn" style="background:#ffd43b;" onclick="showLearnTutorial('multiplication')">Multiplication</button>
-                <button class="topic-btn" style="background:#74c0fc;" onclick="showLearnTutorial('division')">Division</button>
+                <button class="topic-btn" data-op="addition" style="background:#ff8787;" onclick="showLearnTutorial('addition')">Addition</button>
+                <button class="topic-btn" data-op="subtraction" style="background:#ffa94d;" onclick="showLearnTutorial('subtraction')">Subtraction</button>
+                <button class="topic-btn" data-op="multiplication" style="background:#ffd43b;" onclick="showLearnTutorial('multiplication')">Multiplication</button>
+                <button class="topic-btn" data-op="division" style="background:#74c0fc;" onclick="showLearnTutorial('division')">Division</button>
+                <button class="topic-btn" data-op="fractions" style="background:#b197fc;" onclick="showLearnTutorial('fractions')">Fractions</button>
+                <button class="topic-btn" data-op="percentages" style="background:#63e6be;" onclick="showLearnTutorial('percentages')">Percentages</button>
             </div>
         </div>
 
-        <div id="tutorialArea" style="display:none; text-align:left; max-width:700px; margin:0 auto; padding:20px;">
-            <button class="back-btn" onclick="backToLearn()">← Back to Learn</button>
+        <div id="tutorialArea" class="tutorial-area" style="display:none;">
+            <div class="section-header">
+                <button class="back-btn" onclick="backToLearn()">← Back to Learn</button>
+                <div style="display:flex; gap:10px; align-items:center;">
+                    <h2 id="tutorialTitle">Learn</h2>
+                    <span id="masteryBadge" class="mastery-badge" style="display:none;">Mastered</span>
+                </div>
+            </div>
             <div id="tutorialContent"></div>
         </div>
 
