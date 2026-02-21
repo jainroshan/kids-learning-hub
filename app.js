@@ -1244,6 +1244,25 @@ function buildLearnContent(operation) {
             ],
             viz: `<div id="vizBox" class="viz-box"></div>`
         }
+        ,
+        tables: {
+            title: 'Multiplication Tables',
+            intro: 'Pick a table and practice quickly.',
+            controls: `
+                <div class="learn-controls">
+                    <label>Table of: <span id="tableBaseVal">5</span></label>
+                    <input id="tableBase" type="range" min="2" max="12" value="5">
+                    <label>Up to: <span id="tableMaxVal">10</span></label>
+                    <input id="tableMax" type="range" min="5" max="12" value="10">
+                </div>
+            `,
+            steps: [
+                'Choose a table (like 5).',
+                'Multiply by 1, 2, 3, and so on.',
+                'Say the answers out loud to remember.'
+            ],
+            viz: `<div id="vizBox" class="viz-box"></div>`
+        }
     };
 
     const config = configs[operation];
@@ -1404,6 +1423,24 @@ function initLearnControls(operation) {
             p.value = saved.p ?? p.value;
         }
         p.addEventListener('input', update);
+        update();
+    } else if (operation === 'tables') {
+        const base = document.getElementById('tableBase');
+        const max = document.getElementById('tableMax');
+        const update = () => {
+            document.getElementById('tableBaseVal').textContent = base.value;
+            document.getElementById('tableMaxVal').textContent = max.value;
+            saveLearnState(operation, { base: base.value, max: max.value });
+            renderTables(parseInt(base.value, 10), parseInt(max.value, 10));
+            newLearnChallenge(operation);
+        };
+        const saved = loadLearnState(operation);
+        if (saved) {
+            base.value = saved.base ?? base.value;
+            max.value = saved.max ?? max.value;
+        }
+        base.addEventListener('input', update);
+        max.addEventListener('input', update);
         update();
     }
 }
@@ -1591,6 +1628,13 @@ function buildChallenge(operation) {
         const base = randInt(5, Math.max(10, Math.floor(maxLarge / 10))) * 10;
         return { question: `What is ${pct}% of ${base}?`, answer: (pct / 100) * base, type: 'number' };
     }
+    if (operation === 'tables') {
+        const saved = loadLearnState('tables') || { base: 5, max: 10 };
+        const base = parseInt(saved.base, 10);
+        const max = parseInt(saved.max, 10);
+        const n = randInt(1, max);
+        return { question: `What is ${base} × ${n}?`, answer: base * n, type: 'number' };
+    }
     return { question: 'What is 2 + 2?', answer: 4, type: 'number' };
 }
 
@@ -1742,4 +1786,14 @@ function renderPercentages(value) {
         <div class="percent-bar"><div class="percent-fill" style="width:${value}%;"></div></div>
         <div style="margin-top:10px; font-weight:600;">${value}%</div>
     `;
+}
+
+function renderTables(base, max) {
+    const box = document.getElementById('vizBox');
+    if (!box) return;
+    let rows = '';
+    for (let i = 1; i <= max; i++) {
+        rows += `<div class="table-row">${base} × ${i} = ${base * i}</div>`;
+    }
+    box.innerHTML = `<div class="table-grid">${rows}</div>`;
 }
