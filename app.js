@@ -1,6 +1,7 @@
 let currentSubject = '';
 let currentGrade = 2;
 let currentTopic = '';
+let isQuickStart = false;
 let difficulty = 'medium';
 let totalQuestions = 10;
 let questionCount = 0;
@@ -10,6 +11,9 @@ let currentAnswer = '';
 let selectedOption = null;
 let questionHistory = [];
 let digitCount = 2; // Default to 2-digit numbers
+let mistakesOnlyMode = false;
+let mistakesQueue = [];
+const digitControl = document.getElementById('digitControl');
 
 const mathTopics = {
     counting: { minGrade: 0, maxGrade: 1, label: 'Counting' },
@@ -74,12 +78,25 @@ document.getElementById('questionCount').addEventListener('change', (e) => {
     }
 });
 
+function setDigitVisibility(isVisible) {
+    if (!digitControl) return;
+    digitControl.style.display = isVisible ? 'flex' : 'none';
+    const digitSelect = document.getElementById('digitCount');
+    if (digitSelect) {
+        digitSelect.disabled = !isVisible;
+    }
+}
+
 function startSubject(subject) {
     currentSubject = subject;
+    isQuickStart = false;
+    mistakesOnlyMode = false;
+    mistakesQueue = [];
     score = 0;
     attempts = 0;
     
     document.getElementById('home').style.display = 'none';
+    setDigitVisibility(false);
     showTopicMenu(subject);
 }
 
@@ -90,6 +107,7 @@ function showTopicMenu(subject) {
     document.getElementById('gkOptions').style.display = 'none';
     document.getElementById('learnSection').style.display = 'none';
     document.getElementById('tutorialArea').style.display = 'none';
+    setDigitVisibility(false);
     
     const topics = subject === 'math' ? mathTopics : subject === 'english' ? englishTopics : gkTopics;
     const container = document.getElementById(subject + 'Options');
@@ -140,6 +158,9 @@ function getGKColor(topic) {
 
 function startTopic(topic) {
     currentTopic = topic;
+    isQuickStart = false;
+    mistakesOnlyMode = false;
+    mistakesQueue = [];
     questionCount = 0;
     score = 0;
     attempts = 0;
@@ -149,12 +170,18 @@ function startTopic(topic) {
     document.getElementById('gkOptions').style.display = 'none';
     document.getElementById('questionArea').style.display = 'block';
     document.getElementById('score').textContent = `Score: 0/${totalQuestions}`;
+    if (currentSubject === 'math') {
+        const hasDigits = !!mathTopics[currentTopic]?.digits;
+        setDigitVisibility(hasDigits);
+    } else {
+        setDigitVisibility(false);
+    }
     updateProgress();
     generateQuestion();
 }
 
 function goHome() {
-    document.getElementById('home').style.display = 'flex';
+    document.getElementById('home').style.display = 'grid';
     document.getElementById('mathOptions').style.display = 'none';
     document.getElementById('englishOptions').style.display = 'none';
     document.getElementById('gkOptions').style.display = 'none';
@@ -162,6 +189,7 @@ function goHome() {
     document.getElementById('tutorialArea').style.display = 'none';
     document.getElementById('questionArea').style.display = 'none';
     document.getElementById('feedback').innerHTML = '';
+    setDigitVisibility(false);
 }
 
 function changeSubject() {
@@ -171,12 +199,31 @@ function changeSubject() {
     document.getElementById('gkOptions').style.display = 'none';
     document.getElementById('learnSection').style.display = 'none';
     document.getElementById('tutorialArea').style.display = 'none';
-    document.getElementById('home').style.display = 'flex';
+    document.getElementById('home').style.display = 'grid';
+    setDigitVisibility(false);
 }
 
 function changeTopic() {
     document.getElementById('questionArea').style.display = 'none';
     showTopicMenu(currentSubject);
+}
+
+function startQuickStart() {
+    currentSubject = 'mixed';
+    currentTopic = 'mixed';
+    isQuickStart = true;
+    mistakesOnlyMode = false;
+    mistakesQueue = [];
+    questionCount = 0;
+    score = 0;
+    attempts = 0;
+    questionHistory = [];
+    document.getElementById('home').style.display = 'none';
+    document.getElementById('questionArea').style.display = 'block';
+    document.getElementById('score').textContent = `Score: 0/${totalQuestions}`;
+    setDigitVisibility(false);
+    updateProgress();
+    generateQuestion();
 }
 
 function generateQuestion() {
@@ -193,6 +240,28 @@ function generateQuestion() {
     // Store current question for history (will be saved when moving to next)
     window.currentQuestionText = '';
     
+    if (mistakesOnlyMode && mistakesQueue.length > 0) {
+        const picked = mistakesQueue.shift();
+        currentSubject = picked.subject;
+        currentTopic = picked.topic;
+    } else if (isQuickStart) {
+        const picked = pickQuickStartTarget();
+        currentSubject = picked.subject;
+        currentTopic = picked.topic;
+    }
+    
+    const topicBadge = document.getElementById('topicBadge');
+    if (topicBadge) {
+        if (isQuickStart || mistakesOnlyMode) {
+            const subjectLabel = currentSubject === 'gk' ? 'GK' : currentSubject.charAt(0).toUpperCase() + currentSubject.slice(1);
+            const topicLabel = getTopicLabel(currentSubject, currentTopic);
+            topicBadge.textContent = `${subjectLabel}: ${topicLabel}`;
+            topicBadge.style.display = 'inline-flex';
+        } else {
+            topicBadge.style.display = 'none';
+        }
+    }
+
     // Show scratch pad for math, hide for others
     if (currentSubject === 'math') {
         document.getElementById('scratchPad').style.display = 'block';
@@ -201,7 +270,7 @@ function generateQuestion() {
     } else if (currentSubject === 'english') {
         document.getElementById('scratchPad').style.display = 'none';
         generateEnglishQuestion();
-    } else {
+    } else if (currentSubject === 'gk') {
         document.getElementById('scratchPad').style.display = 'none';
         generateGKQuestion();
     }
@@ -243,7 +312,9 @@ function saveCurrentAnswer() {
         question: questionText,
         userAnswer: userAnswer,
         correctAnswer: currentAnswer || 'N/A',
-        isCorrect: isCorrect
+        isCorrect: isCorrect,
+        subject: currentSubject,
+        topic: currentTopic
     });
     
     console.log('Current score:', score, 'History length:', questionHistory.length);
@@ -259,6 +330,7 @@ function showResults() {
     const feedback = document.getElementById('feedback');
     
     const percentage = totalQuestions > 0 ? Math.round((score / totalQuestions) * 100) : 0;
+    const mistakes = questionHistory.filter(item => !item.isCorrect);
     
     q.innerHTML = `🎉 Quiz Complete! 🎉`;
     
@@ -269,27 +341,43 @@ function showResults() {
     </div>`;
     
     if (questionHistory.length > 0) {
-        reviewHTML += `<div style="text-align:left; max-width:600px; margin:20px auto; max-height:400px; overflow-y:auto;">
-            <h3 style="color:#667eea; margin-bottom:15px;">Review Your Answers:</h3>`;
+        reviewHTML += `<div style="text-align:left; max-width:640px; margin:18px auto;">
+            <h3 style="color:#4451d1; margin-bottom:10px;">Review Your Answers</h3>
+            <div class="review-list">`;
         
         questionHistory.forEach((item, index) => {
             const icon = item.isCorrect ? '✅' : '❌';
-            const color = item.isCorrect ? '#51cf66' : '#ff6b6b';
+            const color = item.isCorrect ? '#2f9e44' : '#e03131';
             reviewHTML += `
-                <div style="border: 2px solid ${color}; border-radius:10px; padding:15px; margin-bottom:15px; background:#f8f9fa;">
-                    <div style="font-weight:bold; margin-bottom:8px;">${icon} Question ${index + 1}</div>
-                    <div style="margin-bottom:8px;">${item.question}</div>
-                    <div style="color:#666;">Your answer: <strong>${item.userAnswer}</strong></div>
-                    ${!item.isCorrect ? `<div style="color:${color};">Correct answer: <strong>${item.correctAnswer}</strong></div>` : ''}
-                </div>`;
+                <details class="review-card">
+                    <summary>
+                        <span>${icon} Question ${index + 1}</span>
+                        <span style="color:${color}; font-weight:600;">${item.isCorrect ? 'Correct' : 'Needs work'}</span>
+                    </summary>
+                    <div class="review-meta">${item.question}</div>
+                    <div class="review-meta">Your answer: <strong>${item.userAnswer}</strong></div>
+                    ${!item.isCorrect ? `<div class="review-meta" style="color:${color};">Correct answer: <strong>${item.correctAnswer}</strong></div>` : ''}
+                </details>`;
         });
         
-        reviewHTML += `</div>`;
+        reviewHTML += `</div></div>`;
     }
     
+    const primaryAction = isQuickStart
+        ? `<button class="next-btn" onclick="startQuickStart()">Try Again</button>`
+        : `<button class="next-btn" onclick="startTopic('${currentTopic}')">Try Again</button>`;
+    const secondaryAction = isQuickStart
+        ? `<button class="change-topic-btn" onclick="goHome()">Pick Subjects</button>`
+        : `<button class="change-topic-btn" onclick="changeTopic()">Different Topic</button>`;
+
+    const mistakesAction = mistakes.length > 0
+        ? `<button class="change-subject-btn" onclick="startMistakesPractice()">Practice Mistakes (${mistakes.length})</button>`
+        : '';
+
     reviewHTML += `
-    <button class="next-btn" onclick="startTopic('${currentTopic}')">Try Again</button>
-    <button class="change-topic-btn" onclick="changeTopic()">Different Topic</button>`;
+    ${primaryAction}
+    ${secondaryAction}
+    ${mistakesAction}`;
     
     a.innerHTML = reviewHTML;
     feedback.innerHTML = '';
@@ -387,12 +475,71 @@ function toggleScratchPad() {
     }
 }
 
+function pickQuickStartTarget() {
+    const topics = [];
+    for (const [key, topic] of Object.entries(mathTopics)) {
+        if (currentGrade >= topic.minGrade && currentGrade <= topic.maxGrade) {
+            topics.push({ subject: 'math', topic: key, weight: 1.1 });
+        }
+    }
+    for (const [key, topic] of Object.entries(englishTopics)) {
+        if (currentGrade >= topic.minGrade && currentGrade <= topic.maxGrade) {
+            topics.push({ subject: 'english', topic: key, weight: 1 });
+        }
+    }
+
+    if (topics.length === 0) {
+        return { subject: 'math', topic: 'addition' };
+    }
+
+    const totalWeight = topics.reduce((sum, t) => sum + t.weight, 0);
+    let r = Math.random() * totalWeight;
+    for (const t of topics) {
+        r -= t.weight;
+        if (r <= 0) return t;
+    }
+    return topics[0];
+}
+
+function startMistakesPractice() {
+    const mistakes = questionHistory.filter(item => !item.isCorrect);
+    if (mistakes.length === 0) {
+        return;
+    }
+    mistakesOnlyMode = true;
+    isQuickStart = false;
+    mistakesQueue = mistakes.map(item => ({ subject: item.subject, topic: item.topic }));
+    questionHistory = [];
+    questionCount = 0;
+    score = 0;
+    document.getElementById('questionArea').style.display = 'block';
+    document.getElementById('score').textContent = `Score: 0/${totalQuestions}`;
+    setDigitVisibility(currentSubject === 'math' && !!mathTopics[currentTopic]?.digits);
+    updateProgress();
+    generateQuestion();
+}
+
+function getTopicLabel(subject, topic) {
+    if (subject === 'math') {
+        return mathTopics[topic]?.label || topic;
+    }
+    if (subject === 'english') {
+        return englishTopics[topic]?.label || topic;
+    }
+    if (subject === 'gk') {
+        return gkTopics[topic]?.label || topic;
+    }
+    return topic;
+}
+
 // Initialize scratch pad when page loads
 window.addEventListener('load', initScratchPad);
+setDigitVisibility(false);
 
 function showLearnSection() {
     document.getElementById('home').style.display = 'none';
     document.getElementById('learnSection').style.display = 'block';
+    setDigitVisibility(false);
 }
 
 function backToLearn() {

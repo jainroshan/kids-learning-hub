@@ -4,81 +4,125 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Kids Learning Hub</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-    <div class="container">
-        <h1>🎓 Kids Learning Hub 🎓</h1>
+    <div class="page">
+        <header class="hero">
+            <div class="hero-badge">Learn • Play • Grow</div>
+            <h1>Kids Learning Hub</h1>
+            <p class="hero-subtitle">Pick a subject, choose a topic, and start a quick practice session.</p>
+        </header>
         
-        <div class="grade-selector">
-            <label for="grade">Grade:</label>
-            <select id="grade">
-                <option value="0">Pre-K</option>
-                <option value="1">Kindergarten</option>
-                <option value="2" selected>1st Grade</option>
-                <option value="3">2nd Grade</option>
-                <option value="4">3rd Grade</option>
-                <option value="5">4th Grade</option>
-                <option value="6">5th Grade</option>
-                <option value="7">6th Grade</option>
-                <option value="8">7th Grade</option>
-                <option value="9">8th Grade</option>
-                <option value="10">9th Grade</option>
-                <option value="11">10th Grade</option>
-            </select>
+        <section class="controls" id="controls">
+            <div class="control-group">
+                <label for="grade">Grade</label>
+                <select id="grade">
+                    <option value="0">Pre-K</option>
+                    <option value="1">Kindergarten</option>
+                    <option value="2" selected>1st Grade</option>
+                    <option value="3">2nd Grade</option>
+                    <option value="4">3rd Grade</option>
+                    <option value="5">4th Grade</option>
+                    <option value="6">5th Grade</option>
+                    <option value="7">6th Grade</option>
+                    <option value="8">7th Grade</option>
+                    <option value="9">8th Grade</option>
+                    <option value="10">9th Grade</option>
+                    <option value="11">10th Grade</option>
+                </select>
+            </div>
             
-            <label for="digitCount" style="margin-left:20px;">Digits (Math):</label>
-            <select id="digitCount">
-                <option value="1">1-digit</option>
-                <option value="2" selected>2-digit</option>
-                <option value="3">3-digit</option>
-                <option value="4">4-digit</option>
-            </select>
+            <div class="control-group" id="digitControl">
+                <label for="digitCount">Digits (Math)</label>
+                <select id="digitCount">
+                    <option value="1">1-digit</option>
+                    <option value="2" selected>2-digit</option>
+                    <option value="3">3-digit</option>
+                    <option value="4">4-digit</option>
+                </select>
+            </div>
             
-            <label for="difficulty" style="margin-left:20px;">Difficulty:</label>
-            <select id="difficulty">
-                <option value="easy">Easy</option>
-                <option value="medium" selected>Medium</option>
-                <option value="hard">Hard</option>
-            </select>
+            <div class="control-group">
+                <label for="difficulty">Difficulty</label>
+                <select id="difficulty">
+                    <option value="easy">Easy</option>
+                    <option value="medium" selected>Medium</option>
+                    <option value="hard">Hard</option>
+                </select>
+            </div>
             
-            <label for="questionCount" style="margin-left:20px;">Questions:</label>
-            <select id="questionCount">
-                <option value="5">5</option>
-                <option value="10" selected>10</option>
-                <option value="15">15</option>
-                <option value="20">20</option>
-            </select>
-        </div>
+            <div class="control-group">
+                <label for="questionCount">Questions</label>
+                <select id="questionCount">
+                    <option value="5">5</option>
+                    <option value="10" selected>10</option>
+                    <option value="15">15</option>
+                    <option value="20">20</option>
+                </select>
+            </div>
+        </section>
 
-        <div id="home" class="subject-buttons">
-            <button class="subject-btn math-btn" onclick="startSubject('math')">🔢 Math</button>
-            <button class="subject-btn english-btn" onclick="startSubject('english')">📚 English</button>
-            <button class="subject-btn" style="background:#20bf6b;" onclick="startSubject('gk')">🌍 General Knowledge</button>
-            <button class="subject-btn" style="background:#f39c12;" onclick="showLearnSection()">📖 Learn Math</button>
+        <div id="home" class="subject-grid">
+            <button class="subject-card math-card" onclick="startSubject('math')">
+                <div class="subject-icon">🔢</div>
+                <div class="subject-title">Math</div>
+                <div class="subject-desc">Practice numbers and operations</div>
+            </button>
+            <button class="subject-card english-card" onclick="startSubject('english')">
+                <div class="subject-icon">📚</div>
+                <div class="subject-title">English</div>
+                <div class="subject-desc">Reading, grammar, and vocabulary</div>
+            </button>
+            <button class="subject-card gk-card" onclick="startSubject('gk')">
+                <div class="subject-icon">🌍</div>
+                <div class="subject-title">General Knowledge</div>
+                <div class="subject-desc">Explore science and the world</div>
+            </button>
+            <button class="subject-card quick-card" onclick="startQuickStart()">
+                <div class="subject-icon">⚡</div>
+                <div class="subject-title">Quick Start</div>
+                <div class="subject-desc">Mixed questions across subjects</div>
+            </button>
+            <button class="subject-card learn-card" onclick="showLearnSection()">
+                <div class="subject-icon">📖</div>
+                <div class="subject-title">Learn Math</div>
+                <div class="subject-desc">Step-by-step tutorials</div>
+            </button>
         </div>
 
         <div id="mathOptions" class="topic-options">
-            <button class="back-btn" onclick="goHome()">← Home</button>
-            <h2>Choose Math Topic:</h2>
+            <div class="section-header">
+                <button class="back-btn" onclick="goHome()">← Home</button>
+                <h2>Choose a Math Topic</h2>
+            </div>
             <div class="topic-grid"></div>
         </div>
 
         <div id="englishOptions" class="topic-options">
-            <button class="back-btn" onclick="goHome()">← Home</button>
-            <h2>Choose English Topic:</h2>
+            <div class="section-header">
+                <button class="back-btn" onclick="goHome()">← Home</button>
+                <h2>Choose an English Topic</h2>
+            </div>
             <div class="topic-grid"></div>
         </div>
 
         <div id="gkOptions" class="topic-options">
-            <button class="back-btn" onclick="goHome()">← Home</button>
-            <h2>Choose General Knowledge Topic:</h2>
+            <div class="section-header">
+                <button class="back-btn" onclick="goHome()">← Home</button>
+                <h2>Choose a GK Topic</h2>
+            </div>
             <div class="topic-grid"></div>
         </div>
 
         <div id="learnSection" class="topic-options">
-            <button class="back-btn" onclick="goHome()">← Home</button>
-            <h2>Learn Math Operations:</h2>
+            <div class="section-header">
+                <button class="back-btn" onclick="goHome()">← Home</button>
+                <h2>Learn Math Operations</h2>
+            </div>
             <div class="topic-grid">
                 <button class="topic-btn" style="background:#ff8787;" onclick="showLearnTutorial('addition')">Addition</button>
                 <button class="topic-btn" style="background:#ffa94d;" onclick="showLearnTutorial('subtraction')">Subtraction</button>
@@ -98,7 +142,13 @@
                 <button class="change-topic-btn" onclick="changeTopic()">Change Topic</button>
                 <button class="change-subject-btn" onclick="changeSubject()">Change Subject</button>
             </div>
-            <div id="progress" style="font-size:1.2em; color:#667eea; margin-bottom:10px;">Question 1/10</div>
+            <div class="progress-row">
+                <div>
+                    <div id="progress">Question 1/10</div>
+                    <div id="topicBadge" class="topic-badge" style="display:none;"></div>
+                </div>
+                <div id="score">Score: 0/10</div>
+            </div>
             <div class="question" id="question"></div>
             
             <div class="scratch-pad" id="scratchPad">
@@ -112,7 +162,6 @@
             
             <div id="answerSection"></div>
             <div class="feedback" id="feedback"></div>
-            <div class="score" id="score">Score: 0/10</div>
         </div>
     </div>
 
