@@ -1188,7 +1188,23 @@ function buildLearnContent(operation) {
                 'Count dots in group B.',
                 'Add them together to get the total.'
             ],
-            viz: `<div id="vizBox" class="viz-box"></div>`
+            viz: `<div id="vizBox" class="viz-box"></div>`,
+            extra: `
+                <div class="learn-panel">
+                    <h3>Carry Over (Multiple Digits)</h3>
+                    <p>When the ones add up to 10 or more, carry 1 to the tens.</p>
+                    <pre style="background:#fff; padding:12px; border-radius:10px; border:1px dashed #c7cbe8;">
+   47
+ + 38
+ ----
+   85
+                    </pre>
+                    <ol class="learn-steps">
+                        <li>Ones: 7 + 8 = 15 → write 5, carry 1.</li>
+                        <li>Tens: 4 + 3 + 1 = 8.</li>
+                    </ol>
+                </div>
+            `
         },
         subtraction: {
             title: 'Subtraction',
@@ -1206,7 +1222,23 @@ function buildLearnContent(operation) {
                 'Cross out the dots being taken away.',
                 'Count the remaining dots.'
             ],
-            viz: `<div id="vizBox" class="viz-box"></div>`
+            viz: `<div id="vizBox" class="viz-box"></div>`,
+            extra: `
+                <div class="learn-panel">
+                    <h3>Borrowing (Multiple Digits)</h3>
+                    <p>If the top digit is smaller, borrow 1 from the next place.</p>
+                    <pre style="background:#fff; padding:12px; border-radius:10px; border:1px dashed #c7cbe8;">
+   52
+ - 27
+ ----
+   25
+                    </pre>
+                    <ol class="learn-steps">
+                        <li>Ones: borrow → 12 - 7 = 5.</li>
+                        <li>Tens: 4 - 2 = 2.</li>
+                    </ol>
+                </div>
+            `
         },
         multiplication: {
             title: 'Multiplication',
@@ -1331,6 +1363,7 @@ function buildLearnContent(operation) {
                 <h3>Steps</h3>
                 <ol class="learn-steps">${steps}</ol>
             </div>
+            ${config.extra || ''}
             <div class="learn-panel">
                 <h3>Challenge</h3>
                 <div id="challengeQuestion"></div>
