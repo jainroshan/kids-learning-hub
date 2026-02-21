@@ -197,6 +197,7 @@ function startSubject(subject) {
     showControls(false);
     setDigitVisibility(false);
     updateDigitOptionsForGrade();
+    setBackVisible(true);
 
     if (subject === 'math') {
         document.getElementById('mathMode').style.display = 'block';
@@ -216,6 +217,7 @@ function showTopicMenu(subject) {
     document.getElementById('mathMode').style.display = 'none';
     setDigitVisibility(false);
     updateDigitOptionsForGrade();
+    setBackVisible(true);
     
     const topics = subject === 'math' ? mathTopics : subject === 'english' ? englishTopics : gkTopics;
     const container = document.getElementById(subject + 'Options');
@@ -305,6 +307,7 @@ function goHome() {
     stopTimer();
     setDigitVisibility(false);
     showControls(false);
+    setBackVisible(false);
     renderBadgeShelf();
 }
 
@@ -320,6 +323,7 @@ function changeSubject() {
     stopTimer();
     setDigitVisibility(false);
     showControls(false);
+    setBackVisible(false);
     renderBadgeShelf();
 }
 
@@ -381,6 +385,11 @@ function showControls(show) {
     if (controls) controls.style.display = show ? 'grid' : 'none';
 }
 
+function setBackVisible(visible) {
+    const btn = document.getElementById('globalBack');
+    if (btn) btn.style.display = visible ? 'inline-flex' : 'none';
+}
+
 function startMathPractice() {
     currentSubject = 'math';
     isQuickStart = false;
@@ -388,6 +397,7 @@ function startMathPractice() {
     showControls(true);
     setDigitVisibility(true);
     updateDigitOptionsForGrade();
+    setBackVisible(true);
     showTopicMenu('math');
 }
 
@@ -406,6 +416,7 @@ function startQuickStart() {
     document.getElementById('home').style.display = 'none';
     showControls(true);
     setDigitVisibility(false);
+    setBackVisible(true);
     document.getElementById('questionArea').style.display = 'block';
     document.getElementById('score').textContent = `Score: 0/${totalQuestions}`;
     document.getElementById('streak').textContent = `Streak: 0`;
@@ -1180,6 +1191,7 @@ window.addEventListener('load', initScratchPad);
 setDigitVisibility(false);
 applyGradeDefaults();
 renderBadgeShelf();
+setBackVisible(false);
 const savedVisual = localStorage.getItem('visualAidVisible');
 const savedScratch = localStorage.getItem('scratchVisible');
 if (savedVisual !== null) visualAidVisible = savedVisual === 'true';
@@ -1192,6 +1204,7 @@ function showLearnSection() {
     document.getElementById('mathMode').style.display = 'none';
     setDigitVisibility(false);
     showControls(false);
+    setBackVisible(true);
     renderLearnResume();
     updateLearnMasteryBadges();
 }
@@ -1199,6 +1212,7 @@ function showLearnSection() {
 function backToLearn() {
     document.getElementById('tutorialArea').style.display = 'none';
     document.getElementById('learnSection').style.display = 'block';
+    setBackVisible(true);
 }
 
 function showLearnTutorial(operation) {
