@@ -1,5 +1,5 @@
 let currentSubject = '';
-let currentGrade = 2;
+let currentGrade = 3;
 let currentTopic = '';
 let isQuickStart = false;
 let difficulty = 'medium';
