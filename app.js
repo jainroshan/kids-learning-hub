@@ -336,6 +336,9 @@ function showControls(show) {
 }
 
 function startMathPractice() {
+    currentSubject = 'math';
+    isQuickStart = false;
+    mistakesOnlyMode = false;
     showControls(true);
     setDigitVisibility(true);
     updateDigitOptionsForGrade();
