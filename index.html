@@ -56,6 +56,14 @@
                     <option value="20">20</option>
                 </select>
             </div>
+            
+            <div class="control-group">
+                <label for="modeSelect">Mode</label>
+                <select id="modeSelect">
+                    <option value="practice" selected>Practice</option>
+                    <option value="challenge">Timed Challenge</option>
+                </select>
+            </div>
         </section>
 
         <div id="home" class="subject-grid">
@@ -85,6 +93,8 @@
                 <div class="subject-desc">Step-by-step tutorials</div>
             </button>
         </div>
+        
+        <div id="badgeShelf" class="badge-shelf" style="display:none;"></div>
 
         <div id="mathOptions" class="topic-options">
             <div class="section-header">
@@ -148,8 +158,12 @@
                 <div>
                     <div id="progress">Question 1/10</div>
                     <div id="topicBadge" class="topic-badge" style="display:none;"></div>
+                    <div id="timer" class="timer-badge" style="display:none;">⏱ 45s</div>
                 </div>
-                <div id="score">Score: 0/10</div>
+                <div class="progress-right">
+                    <div id="streak">Streak: 0</div>
+                    <div id="score">Score: 0/10</div>
+                </div>
             </div>
             <div class="question" id="question"></div>
             

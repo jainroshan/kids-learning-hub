@@ -17,8 +17,14 @@ let currentLearnChallenge = null;
 let learnSpeechEnabled = true;
 let learnSpeechRate = 1;
 let currentLearnSteps = [];
+let streak = 0;
+let maxStreak = 0;
+let quizMode = 'practice';
+let timerInterval = null;
+let timeLeft = 0;
 const digitControl = document.getElementById('digitControl');
 const learnResume = document.getElementById('learnResume');
+const badgeShelf = document.getElementById('badgeShelf');
 
 function getGradeDigitCap(grade) {
     if (grade <= 1) return 1;
@@ -125,6 +131,10 @@ document.getElementById('questionCount').addEventListener('change', (e) => {
     }
 });
 
+document.getElementById('modeSelect').addEventListener('change', (e) => {
+    quizMode = e.target.value;
+});
+
 function setDigitVisibility(isVisible) {
     if (!digitControl) return;
     digitControl.style.display = isVisible ? 'flex' : 'none';
@@ -165,6 +175,8 @@ function startSubject(subject) {
     mistakesOnlyMode = false;
     mistakesQueue = [];
     score = 0;
+    streak = 0;
+    maxStreak = 0;
     attempts = 0;
     
     document.getElementById('home').style.display = 'none';
@@ -236,6 +248,8 @@ function startTopic(topic) {
     mistakesQueue = [];
     questionCount = 0;
     score = 0;
+    streak = 0;
+    maxStreak = 0;
     attempts = 0;
     questionHistory = [];
     document.getElementById('mathOptions').style.display = 'none';
@@ -243,6 +257,7 @@ function startTopic(topic) {
     document.getElementById('gkOptions').style.display = 'none';
     document.getElementById('questionArea').style.display = 'block';
     document.getElementById('score').textContent = `Score: 0/${totalQuestions}`;
+    document.getElementById('streak').textContent = `Streak: 0`;
     if (currentSubject === 'math') {
         const hasDigits = !!mathTopics[currentTopic]?.digits;
         setDigitVisibility(hasDigits);
@@ -263,7 +278,9 @@ function goHome() {
     document.getElementById('tutorialArea').style.display = 'none';
     document.getElementById('questionArea').style.display = 'none';
     document.getElementById('feedback').innerHTML = '';
+    stopTimer();
     setDigitVisibility(false);
+    renderBadgeShelf();
 }
 
 function changeSubject() {
@@ -274,11 +291,14 @@ function changeSubject() {
     document.getElementById('learnSection').style.display = 'none';
     document.getElementById('tutorialArea').style.display = 'none';
     document.getElementById('home').style.display = 'grid';
+    stopTimer();
     setDigitVisibility(false);
+    renderBadgeShelf();
 }
 
 function changeTopic() {
     document.getElementById('questionArea').style.display = 'none';
+    stopTimer();
     showTopicMenu(currentSubject);
 }
 
@@ -290,11 +310,14 @@ function startQuickStart() {
     mistakesQueue = [];
     questionCount = 0;
     score = 0;
+    streak = 0;
+    maxStreak = 0;
     attempts = 0;
     questionHistory = [];
     document.getElementById('home').style.display = 'none';
     document.getElementById('questionArea').style.display = 'block';
     document.getElementById('score').textContent = `Score: 0/${totalQuestions}`;
+    document.getElementById('streak').textContent = `Streak: 0`;
     setDigitVisibility(false);
     updateProgress();
     generateQuestion();
@@ -310,6 +333,7 @@ function generateQuestion() {
     document.getElementById('feedback').innerHTML = '';
     selectedOption = null;
     updateProgress();
+    startTimerIfNeeded();
     
     // Store current question for history (will be saved when moving to next)
     window.currentQuestionText = '';
@@ -379,7 +403,12 @@ function saveCurrentAnswer() {
     
     if (isCorrect) {
         score++;
+        streak++;
+        if (streak > maxStreak) maxStreak = streak;
+    } else {
+        streak = 0;
     }
+    document.getElementById('streak').textContent = `Streak: ${streak}`;
     
     // Save to history
     questionHistory.push({
@@ -399,12 +428,14 @@ function updateProgress() {
 }
 
 function showResults() {
+    stopTimer();
     const q = document.getElementById('question');
     const a = document.getElementById('answerSection');
     const feedback = document.getElementById('feedback');
     
     const percentage = totalQuestions > 0 ? Math.round((score / totalQuestions) * 100) : 0;
     const mistakes = questionHistory.filter(item => !item.isCorrect);
+    const newlyUnlocked = unlockBadges(score, totalQuestions);
     
     q.innerHTML = `🎉 Quiz Complete! 🎉`;
     
@@ -452,10 +483,15 @@ function showResults() {
     ${primaryAction}
     ${secondaryAction}
     ${mistakesAction}`;
+
+    if (newlyUnlocked.length > 0) {
+        reviewHTML += `<div style="margin-top:16px; font-weight:600; color:#2f9e44;">New badges: ${newlyUnlocked.join(', ')}</div>`;
+    }
     
     a.innerHTML = reviewHTML;
     feedback.innerHTML = '';
     feedback.className = 'feedback';
+    renderBadgeShelf();
 }
 
 function selectOption(option) {
@@ -472,6 +508,46 @@ function checkAnswer() {
         saveCurrentAnswer();
     }
     generateQuestion();
+}
+
+function startTimerIfNeeded() {
+    const timerEl = document.getElementById('timer');
+    if (quizMode !== 'challenge') {
+        if (timerEl) timerEl.style.display = 'none';
+        stopTimer();
+        return;
+    }
+    timeLeft = getChallengeTime();
+    if (timerEl) {
+        timerEl.style.display = 'inline-flex';
+        timerEl.textContent = `⏱ ${timeLeft}s`;
+    }
+    stopTimer();
+    timerInterval = setInterval(() => {
+        timeLeft -= 1;
+        if (timerEl) timerEl.textContent = `⏱ ${timeLeft}s`;
+        if (timeLeft <= 0) {
+            stopTimer();
+            if (currentAnswer) {
+                saveCurrentAnswer();
+            }
+            generateQuestion();
+        }
+    }, 1000);
+}
+
+function stopTimer() {
+    if (timerInterval) {
+        clearInterval(timerInterval);
+        timerInterval = null;
+    }
+}
+
+function getChallengeTime() {
+    if (currentGrade <= 1) return 60;
+    if (currentGrade <= 3) return 50;
+    if (currentGrade <= 5) return 45;
+    return 40;
 }
 
 // Scratch pad functionality
@@ -648,11 +724,59 @@ function startMistakesPractice() {
     questionHistory = [];
     questionCount = 0;
     score = 0;
+    streak = 0;
+    maxStreak = 0;
     document.getElementById('questionArea').style.display = 'block';
     document.getElementById('score').textContent = `Score: 0/${totalQuestions}`;
+    document.getElementById('streak').textContent = `Streak: 0`;
     setDigitVisibility(currentSubject === 'math' && !!mathTopics[currentTopic]?.digits);
     updateProgress();
     generateQuestion();
+}
+
+function getBadges() {
+    const raw = localStorage.getItem('badges');
+    if (!raw) return [];
+    try {
+        const parsed = JSON.parse(raw);
+        return Array.isArray(parsed) ? parsed : [];
+    } catch {
+        return [];
+    }
+}
+
+function saveBadges(badges) {
+    localStorage.setItem('badges', JSON.stringify(badges));
+}
+
+function unlockBadges(scoreVal, total) {
+    const earned = getBadges();
+    const newly = [];
+    const maybeAdd = (badge, condition) => {
+        if (condition && !earned.includes(badge)) {
+            earned.push(badge);
+            newly.push(badge);
+        }
+    };
+    maybeAdd('Hot Streak x5', maxStreak >= 5);
+    maybeAdd('Hot Streak x10', maxStreak >= 10);
+    maybeAdd('10 Correct', scoreVal >= 10);
+    maybeAdd('25 Correct', scoreVal >= 25);
+    maybeAdd('Perfect Score', scoreVal === total && total > 0);
+    if (newly.length > 0) saveBadges(earned);
+    return newly;
+}
+
+function renderBadgeShelf() {
+    if (!badgeShelf) return;
+    const badges = getBadges();
+    if (badges.length === 0) {
+        badgeShelf.style.display = 'none';
+        badgeShelf.innerHTML = '';
+        return;
+    }
+    badgeShelf.style.display = 'flex';
+    badgeShelf.innerHTML = badges.map(b => `<div class="badge-chip">${b}</div>`).join('');
 }
 
 function getTopicLabel(subject, topic) {
@@ -672,6 +796,7 @@ function getTopicLabel(subject, topic) {
 window.addEventListener('load', initScratchPad);
 setDigitVisibility(false);
 applyGradeDefaults();
+renderBadgeShelf();
 
 function showLearnSection() {
     document.getElementById('home').style.display = 'none';
