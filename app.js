@@ -22,6 +22,7 @@ let maxStreak = 0;
 let quizMode = 'practice';
 let timerInterval = null;
 let timeLeft = 0;
+let feedbackVoiceEnabled = true;
 const digitControl = document.getElementById('digitControl');
 const learnResume = document.getElementById('learnResume');
 const badgeShelf = document.getElementById('badgeShelf');
@@ -133,6 +134,14 @@ document.getElementById('questionCount').addEventListener('change', (e) => {
 
 document.getElementById('modeSelect').addEventListener('change', (e) => {
     quizMode = e.target.value;
+});
+
+window.addEventListener('click', (e) => {
+    if (e.target && e.target.id === 'voiceToggle') {
+        feedbackVoiceEnabled = !feedbackVoiceEnabled;
+        localStorage.setItem('feedbackVoiceEnabled', String(feedbackVoiceEnabled));
+        e.target.textContent = feedbackVoiceEnabled ? 'Voice On' : 'Voice Off';
+    }
 });
 
 function setDigitVisibility(isVisible) {
@@ -335,6 +344,7 @@ function generateQuestion() {
     updateProgress();
     startTimerIfNeeded();
     updateHelperText('');
+    renderVoiceToggle();
     
     // Store current question for history (will be saved when moving to next)
     window.currentQuestionText = '';
@@ -411,6 +421,7 @@ function saveCurrentAnswer() {
     }
     document.getElementById('streak').textContent = `Streak: ${streak}`;
     animateAnswer(isCorrect);
+    speakFeedback(isCorrect);
     
     // Save to history
     questionHistory.push({
@@ -433,6 +444,11 @@ function showHint() {
 function showExplanation() {
     const explanation = buildExplanation();
     updateHelperText(explanation);
+}
+
+function showSteps() {
+    const steps = buildSteps();
+    updateHelperText(steps);
 }
 
 function updateHelperText(text) {
@@ -507,6 +523,59 @@ function buildExplanation() {
         return 'Use facts you already know from school or daily life.';
     }
     return '';
+}
+
+function buildSteps() {
+    const meta = window.currentQuestionMeta || {};
+    if (meta.subject === 'math') {
+        if (meta.topic === 'addition') {
+            return `1) Add ones: ${meta.a % 10} + ${meta.b % 10}. 2) Add tens: ${Math.floor(meta.a / 10)} + ${Math.floor(meta.b / 10)}.`;
+        }
+        if (meta.topic === 'subtraction') {
+            return `1) Subtract ones. 2) Subtract tens. Borrow if needed.`;
+        }
+        if (meta.topic === 'multiplication') {
+            return `1) Multiply ${meta.a} by ${meta.b}. 2) Combine results.`;
+        }
+        if (meta.topic === 'division') {
+            return `1) How many ${meta.b}'s fit in ${meta.a}? 2) Check by multiplying back.`;
+        }
+        if (meta.topic === 'fractions') {
+            return `1) Add numerators: ${meta.a} + ${meta.b}. 2) Keep denominator ${meta.d}. 3) Convert to decimal.`;
+        }
+        if (meta.topic === 'percentages') {
+            return `1) Convert ${meta.p}% to a decimal. 2) Multiply by ${meta.a}.`;
+        }
+        if (meta.topic === 'algebra') {
+            return `1) Undo the +${meta.b}. 2) Divide by ${meta.a}.`;
+        }
+    }
+    return 'Read the question carefully and solve step by step.';
+}
+
+function renderVoiceToggle() {
+    const helperRow = document.querySelector('.helper-row');
+    if (!helperRow) return;
+    let btn = document.getElementById('voiceToggle');
+    const saved = localStorage.getItem('feedbackVoiceEnabled');
+    if (saved !== null) feedbackVoiceEnabled = saved === 'true';
+    if (!btn) {
+        btn = document.createElement('button');
+        btn.id = 'voiceToggle';
+        btn.className = 'helper-btn';
+        helperRow.appendChild(btn);
+    }
+    btn.textContent = feedbackVoiceEnabled ? 'Voice On' : 'Voice Off';
+}
+
+function speakFeedback(isCorrect) {
+    if (!('speechSynthesis' in window)) return;
+    if (!feedbackVoiceEnabled) return;
+    const text = isCorrect ? 'Great job! Keep going.' : 'Nice try. You can do it.';
+    const utter = new SpeechSynthesisUtterance(text);
+    utter.rate = 1;
+    speechSynthesis.cancel();
+    speechSynthesis.speak(utter);
 }
 
 function updateProgress() {
