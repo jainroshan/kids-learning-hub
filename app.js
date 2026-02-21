@@ -1194,8 +1194,8 @@ function buildLearnContent(operation) {
                     <h3>Carry Over (Multiple Digits)</h3>
                     <p>When the ones add up to 10 or more, carry 1 to the tens.</p>
                     <div class="learn-carry-controls">
-                        <label>Top: <input id="carryTop" type="number" min="10" max="99" value="47"></label>
-                        <label>Bottom: <input id="carryBottom" type="number" min="10" max="99" value="38"></label>
+                        <label>Top: <input id="carryTop" type="number" min="10" max="9999" value="247"></label>
+                        <label>Bottom: <input id="carryBottom" type="number" min="10" max="9999" value="389"></label>
                         <button onclick="renderCarry()">Show Steps</button>
                     </div>
                     <div id="carryVisual" class="carry-visual"></div>
@@ -1224,8 +1224,8 @@ function buildLearnContent(operation) {
                     <h3>Borrowing (Multiple Digits)</h3>
                     <p>If the top digit is smaller, borrow 1 from the next place.</p>
                     <div class="learn-carry-controls">
-                        <label>Top: <input id="borrowTop" type="number" min="10" max="99" value="52"></label>
-                        <label>Bottom: <input id="borrowBottom" type="number" min="10" max="99" value="27"></label>
+                        <label>Top: <input id="borrowTop" type="number" min="10" max="9999" value="503"></label>
+                        <label>Bottom: <input id="borrowBottom" type="number" min="10" max="9999" value="247"></label>
                         <button onclick="renderBorrow()">Show Steps</button>
                     </div>
                     <div id="borrowVisual" class="carry-visual"></div>
@@ -1864,25 +1864,22 @@ function renderCarry() {
     const bottomInput = document.getElementById('carryBottom');
     const out = document.getElementById('carryVisual');
     if (!topInput || !bottomInput || !out) return;
-    const top = clampTwoDigit(parseInt(topInput.value, 10));
-    const bottom = clampTwoDigit(parseInt(bottomInput.value, 10));
+    const top = clampMultiDigit(parseInt(topInput.value, 10));
+    const bottom = clampMultiDigit(parseInt(bottomInput.value, 10));
     topInput.value = top;
     bottomInput.value = bottom;
-    const onesSum = (top % 10) + (bottom % 10);
-    const carry = onesSum >= 10 ? 1 : 0;
-    const ones = onesSum % 10;
-    const tensSum = Math.floor(top / 10) + Math.floor(bottom / 10) + carry;
+    const { carryRow, result, steps } = addWithCarry(top, bottom);
+    const width = Math.max(String(top).length, String(bottom).length, String(result).length);
     out.innerHTML = `
         <div class="math-problem">
-            <div>${carry ? ' ' + carry : ''}</div>
-            <div>${top}</div>
-            <div>+${bottom}</div>
+            <div class="carry-row">${carryRow.padStart(width)}</div>
+            <div>${String(top).padStart(width)}</div>
+            <div>+${String(bottom).padStart(width - 1)}</div>
             <div class="line"></div>
-            <div>${tensSum}${ones}</div>
+            <div>${String(result).padStart(width)}</div>
         </div>
         <ol class="learn-steps" style="margin-top:10px;">
-            <li>Ones: ${(top % 10)} + ${(bottom % 10)} = ${onesSum} → write ${ones}, carry ${carry}.</li>
-            <li>Tens: ${Math.floor(top / 10)} + ${Math.floor(bottom / 10)} + ${carry} = ${tensSum}.</li>
+            ${steps.map(s => `<li>${s}</li>`).join('')}
         </ol>
     `;
 }
@@ -1892,37 +1889,93 @@ function renderBorrow() {
     const bottomInput = document.getElementById('borrowBottom');
     const out = document.getElementById('borrowVisual');
     if (!topInput || !bottomInput || !out) return;
-    let top = clampTwoDigit(parseInt(topInput.value, 10));
-    let bottom = clampTwoDigit(parseInt(bottomInput.value, 10));
+    let top = clampMultiDigit(parseInt(topInput.value, 10));
+    let bottom = clampMultiDigit(parseInt(bottomInput.value, 10));
     if (bottom > top) {
         bottom = Math.max(10, top - 1);
     }
     topInput.value = top;
     bottomInput.value = bottom;
-    const topOnes = top % 10;
-    const bottomOnes = bottom % 10;
-    const needBorrow = topOnes < bottomOnes;
-    const newTopTens = Math.floor(top / 10) - (needBorrow ? 1 : 0);
-    const newTopOnes = (needBorrow ? topOnes + 10 : topOnes);
-    const ones = newTopOnes - bottomOnes;
-    const tens = newTopTens - Math.floor(bottom / 10);
+    const { borrowRow, result, steps } = subtractWithBorrow(top, bottom);
+    const width = Math.max(String(top).length, String(bottom).length, String(result).length);
     out.innerHTML = `
         <div class="math-problem">
-            <div>${needBorrow ? newTopTens : Math.floor(top / 10)} ${needBorrow ? (newTopOnes) : ''}</div>
-            <div>${top}</div>
-            <div>−${bottom}</div>
+            <div class="carry-row">${borrowRow.padStart(width)}</div>
+            <div>${String(top).padStart(width)}</div>
+            <div>−${String(bottom).padStart(width - 1)}</div>
             <div class="line"></div>
-            <div>${tens}${ones}</div>
+            <div>${String(result).padStart(width)}</div>
         </div>
         <ol class="learn-steps" style="margin-top:10px;">
-            <li>${needBorrow ? `Borrow 1 ten → ones become ${newTopOnes}.` : `No borrow needed.`}</li>
-            <li>Ones: ${newTopOnes} - ${bottomOnes} = ${ones}.</li>
-            <li>Tens: ${newTopTens} - ${Math.floor(bottom / 10)} = ${tens}.</li>
+            ${steps.map(s => `<li>${s}</li>`).join('')}
         </ol>
     `;
 }
 
-function clampTwoDigit(value) {
+function clampMultiDigit(value) {
     if (isNaN(value)) return 10;
-    return Math.min(99, Math.max(10, value));
+    return Math.min(9999, Math.max(10, value));
+}
+
+function addWithCarry(a, b) {
+    const aDigits = String(a).split('').reverse().map(Number);
+    const bDigits = String(b).split('').reverse().map(Number);
+    const maxLen = Math.max(aDigits.length, bDigits.length);
+    let carry = 0;
+    const resultDigits = [];
+    const carryRow = [];
+    const steps = [];
+    for (let i = 0; i < maxLen; i++) {
+        const ad = aDigits[i] || 0;
+        const bd = bDigits[i] || 0;
+        const sum = ad + bd + carry;
+        const digit = sum % 10;
+        const newCarry = Math.floor(sum / 10);
+        resultDigits.push(digit);
+        carryRow.push(carry ? String(carry) : ' ');
+        steps.push(`Place ${i + 1}: ${ad} + ${bd} + ${carry} = ${sum} → write ${digit}, carry ${newCarry}.`);
+        carry = newCarry;
+    }
+    if (carry) {
+        resultDigits.push(carry);
+        carryRow.push(' ');
+    }
+    return {
+        result: Number(resultDigits.reverse().join('')),
+        carryRow: carryRow.reverse().join(''),
+        steps
+    };
+}
+
+function subtractWithBorrow(a, b) {
+    const aDigits = String(a).split('').reverse().map(Number);
+    const bDigits = String(b).split('').reverse().map(Number);
+    const maxLen = Math.max(aDigits.length, bDigits.length);
+    const resultDigits = [];
+    const borrowRow = [];
+    const steps = [];
+    let borrow = 0;
+    for (let i = 0; i < maxLen; i++) {
+        let ad = (aDigits[i] || 0) - borrow;
+        const bd = bDigits[i] || 0;
+        if (ad < bd) {
+            ad += 10;
+            borrow = 1;
+            borrowRow.push('1');
+            steps.push(`Place ${i + 1}: borrowed 1 → ${ad} - ${bd} = ${ad - bd}.`);
+        } else {
+            borrow = 0;
+            borrowRow.push(' ');
+            steps.push(`Place ${i + 1}: ${ad} - ${bd} = ${ad - bd}.`);
+        }
+        resultDigits.push(ad - bd);
+    }
+    while (resultDigits.length > 1 && resultDigits[resultDigits.length - 1] === 0) {
+        resultDigits.pop();
+    }
+    return {
+        result: Number(resultDigits.reverse().join('')),
+        borrowRow: borrowRow.reverse().join(''),
+        steps
+    };
 }

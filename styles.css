@@ -635,6 +635,13 @@ h2 {
     margin: 6px 0 4px;
 }
 
+.math-problem .carry-row {
+    color: #e8590c;
+    font-weight: 700;
+    font-size: 0.9rem;
+    min-height: 16px;
+}
+
 .math-visual {
     margin: 10px auto 6px;
     max-width: 520px;
