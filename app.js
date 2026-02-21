@@ -330,6 +330,52 @@ function changeTopic() {
     showTopicMenu(currentSubject);
 }
 
+function isVisible(id) {
+    const el = document.getElementById(id);
+    if (!el) return false;
+    return el.style.display !== 'none';
+}
+
+function goBack() {
+    if (isVisible('tutorialArea')) {
+        backToLearn();
+        return;
+    }
+    if (isVisible('learnSection')) {
+        document.getElementById('learnSection').style.display = 'none';
+        document.getElementById('mathMode').style.display = 'block';
+        showControls(false);
+        setDigitVisibility(false);
+        return;
+    }
+    if (isVisible('mathMode')) {
+        goHome();
+        return;
+    }
+    if (isVisible('mathOptions') || isVisible('englishOptions') || isVisible('gkOptions')) {
+        if (currentSubject === 'math') {
+            document.getElementById('mathOptions').style.display = 'none';
+            document.getElementById('mathMode').style.display = 'block';
+            showControls(false);
+            setDigitVisibility(false);
+        } else {
+            goHome();
+        }
+        return;
+    }
+    if (isVisible('questionArea')) {
+        stopTimer();
+        if (isQuickStart) {
+            goHome();
+            return;
+        }
+        showControls(true);
+        showTopicMenu(currentSubject);
+        return;
+    }
+    goHome();
+}
+
 function showControls(show) {
     const controls = document.getElementById('controls');
     if (controls) controls.style.display = show ? 'grid' : 'none';
