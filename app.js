@@ -1193,16 +1193,12 @@ function buildLearnContent(operation) {
                 <div class="learn-panel">
                     <h3>Carry Over (Multiple Digits)</h3>
                     <p>When the ones add up to 10 or more, carry 1 to the tens.</p>
-                    <pre style="background:#fff; padding:12px; border-radius:10px; border:1px dashed #c7cbe8;">
-   47
- + 38
- ----
-   85
-                    </pre>
-                    <ol class="learn-steps">
-                        <li>Ones: 7 + 8 = 15 → write 5, carry 1.</li>
-                        <li>Tens: 4 + 3 + 1 = 8.</li>
-                    </ol>
+                    <div class="learn-carry-controls">
+                        <label>Top: <input id="carryTop" type="number" min="10" max="99" value="47"></label>
+                        <label>Bottom: <input id="carryBottom" type="number" min="10" max="99" value="38"></label>
+                        <button onclick="renderCarry()">Show Steps</button>
+                    </div>
+                    <div id="carryVisual" class="carry-visual"></div>
                 </div>
             `
         },
@@ -1227,16 +1223,12 @@ function buildLearnContent(operation) {
                 <div class="learn-panel">
                     <h3>Borrowing (Multiple Digits)</h3>
                     <p>If the top digit is smaller, borrow 1 from the next place.</p>
-                    <pre style="background:#fff; padding:12px; border-radius:10px; border:1px dashed #c7cbe8;">
-   52
- - 27
- ----
-   25
-                    </pre>
-                    <ol class="learn-steps">
-                        <li>Ones: borrow → 12 - 7 = 5.</li>
-                        <li>Tens: 4 - 2 = 2.</li>
-                    </ol>
+                    <div class="learn-carry-controls">
+                        <label>Top: <input id="borrowTop" type="number" min="10" max="99" value="52"></label>
+                        <label>Bottom: <input id="borrowBottom" type="number" min="10" max="99" value="27"></label>
+                        <button onclick="renderBorrow()">Show Steps</button>
+                    </div>
+                    <div id="borrowVisual" class="carry-visual"></div>
                 </div>
             `
         },
@@ -1403,6 +1395,7 @@ function initLearnControls(operation) {
         a.addEventListener('input', update);
         b.addEventListener('input', update);
         update();
+        setTimeout(renderCarry, 0);
     } else if (operation === 'subtraction') {
         const a = document.getElementById('subA');
         const b = document.getElementById('subB');
@@ -1425,6 +1418,7 @@ function initLearnControls(operation) {
         a.addEventListener('input', update);
         b.addEventListener('input', update);
         update();
+        setTimeout(renderBorrow, 0);
     } else if (operation === 'multiplication') {
         const a = document.getElementById('mulA');
         const b = document.getElementById('mulB');
@@ -1863,4 +1857,72 @@ function renderTables(base, max) {
         rows += `<div class="table-row">${base} × ${i} = ${base * i}</div>`;
     }
     box.innerHTML = `<div class="table-grid">${rows}</div>`;
+}
+
+function renderCarry() {
+    const topInput = document.getElementById('carryTop');
+    const bottomInput = document.getElementById('carryBottom');
+    const out = document.getElementById('carryVisual');
+    if (!topInput || !bottomInput || !out) return;
+    const top = clampTwoDigit(parseInt(topInput.value, 10));
+    const bottom = clampTwoDigit(parseInt(bottomInput.value, 10));
+    topInput.value = top;
+    bottomInput.value = bottom;
+    const onesSum = (top % 10) + (bottom % 10);
+    const carry = onesSum >= 10 ? 1 : 0;
+    const ones = onesSum % 10;
+    const tensSum = Math.floor(top / 10) + Math.floor(bottom / 10) + carry;
+    out.innerHTML = `
+        <div class="math-problem">
+            <div>${carry ? ' ' + carry : ''}</div>
+            <div>${top}</div>
+            <div>+${bottom}</div>
+            <div class="line"></div>
+            <div>${tensSum}${ones}</div>
+        </div>
+        <ol class="learn-steps" style="margin-top:10px;">
+            <li>Ones: ${(top % 10)} + ${(bottom % 10)} = ${onesSum} → write ${ones}, carry ${carry}.</li>
+            <li>Tens: ${Math.floor(top / 10)} + ${Math.floor(bottom / 10)} + ${carry} = ${tensSum}.</li>
+        </ol>
+    `;
+}
+
+function renderBorrow() {
+    const topInput = document.getElementById('borrowTop');
+    const bottomInput = document.getElementById('borrowBottom');
+    const out = document.getElementById('borrowVisual');
+    if (!topInput || !bottomInput || !out) return;
+    let top = clampTwoDigit(parseInt(topInput.value, 10));
+    let bottom = clampTwoDigit(parseInt(bottomInput.value, 10));
+    if (bottom > top) {
+        bottom = Math.max(10, top - 1);
+    }
+    topInput.value = top;
+    bottomInput.value = bottom;
+    const topOnes = top % 10;
+    const bottomOnes = bottom % 10;
+    const needBorrow = topOnes < bottomOnes;
+    const newTopTens = Math.floor(top / 10) - (needBorrow ? 1 : 0);
+    const newTopOnes = (needBorrow ? topOnes + 10 : topOnes);
+    const ones = newTopOnes - bottomOnes;
+    const tens = newTopTens - Math.floor(bottom / 10);
+    out.innerHTML = `
+        <div class="math-problem">
+            <div>${needBorrow ? newTopTens : Math.floor(top / 10)} ${needBorrow ? (newTopOnes) : ''}</div>
+            <div>${top}</div>
+            <div>−${bottom}</div>
+            <div class="line"></div>
+            <div>${tens}${ones}</div>
+        </div>
+        <ol class="learn-steps" style="margin-top:10px;">
+            <li>${needBorrow ? `Borrow 1 ten → ones become ${newTopOnes}.` : `No borrow needed.`}</li>
+            <li>Ones: ${newTopOnes} - ${bottomOnes} = ${ones}.</li>
+            <li>Tens: ${newTopTens} - ${Math.floor(bottom / 10)} = ${tens}.</li>
+        </ol>
+    `;
+}
+
+function clampTwoDigit(value) {
+    if (isNaN(value)) return 10;
+    return Math.min(99, Math.max(10, value));
 }
