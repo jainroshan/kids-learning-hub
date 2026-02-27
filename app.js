@@ -283,17 +283,92 @@ function spawnRewardBurst(text) {
 }
 
 function spawnConfetti(count = 18) {
-    const colors = ['#ff6b6b', '#ffd43b', '#74c0fc', '#63e6be', '#b197fc'];
+    const colors = ['#ff6b6b', '#ffd43b', '#74c0fc', '#63e6be', '#b197fc', '#ff922b', '#f783ac'];
+    const shapes = ['square', 'circle', 'triangle'];
     for (let i = 0; i < count; i += 1) {
         const piece = document.createElement('div');
         piece.className = 'confetti-piece';
+        const shape = shapes[Math.floor(Math.random() * shapes.length)];
+        const size = 8 + Math.floor(Math.random() * 10); // 8–17px
         piece.style.left = `${Math.random() * 100}%`;
         piece.style.background = colors[i % colors.length];
-        piece.style.animationDelay = `${Math.random() * 0.2}s`;
+        piece.style.animationDelay = `${Math.random() * 0.4}s`;
         piece.style.transform = `rotate(${Math.random() * 360}deg)`;
+        piece.style.width = `${size}px`;
+        piece.style.height = `${size}px`;
+        if (shape === 'circle') {
+            piece.style.borderRadius = '50%';
+        } else if (shape === 'triangle') {
+            piece.style.background = 'transparent';
+            piece.style.width = '0';
+            piece.style.height = '0';
+            piece.style.borderLeft = `${size / 2}px solid transparent`;
+            piece.style.borderRight = `${size / 2}px solid transparent`;
+            piece.style.borderBottom = `${size}px solid ${colors[i % colors.length]}`;
+        }
         document.body.appendChild(piece);
         piece.addEventListener('animationend', () => piece.remove());
     }
+}
+
+function showLevelUpCelebration(level) {
+    if (typeof playLevelUpSound === 'function') playLevelUpSound();
+    spawnConfetti(45);
+    const overlay = document.getElementById('levelUpOverlay');
+    const numEl = document.getElementById('levelUpNumber');
+    if (!overlay) return;
+    if (numEl) numEl.textContent = level;
+    overlay.style.display = 'flex';
+    overlay.classList.add('visible');
+    setTimeout(() => {
+        overlay.classList.remove('visible');
+        setTimeout(() => { overlay.style.display = 'none'; }, 400);
+    }, 2200);
+}
+
+function showCollectibleReveal(item) {
+    if (!item) return;
+    const modal = document.getElementById('collectibleRevealModal');
+    const flipCard = document.getElementById('collectibleFlipCard');
+    const revealEmoji = document.getElementById('revealEmoji');
+    const revealName = document.getElementById('revealName');
+    const revealRarity = document.getElementById('revealRarity');
+    if (!modal) return;
+
+    const rarityColors = { Common: '#74c0fc', Rare: '#b197fc', Epic: '#ff922b', Legendary: '#ffd43b' };
+    const glowColor = rarityColors[item.rarity] || '#74c0fc';
+
+    if (revealEmoji) revealEmoji.textContent = item.emoji;
+    if (revealName) revealName.textContent = item.name;
+    if (revealRarity) {
+        revealRarity.textContent = item.rarity;
+        revealRarity.style.background = glowColor;
+    }
+    if (flipCard) {
+        flipCard.classList.remove('revealed');
+        flipCard.style.setProperty('--rarity-glow', glowColor);
+    }
+
+    modal.style.display = 'flex';
+    // Flip after short delay for suspense
+    setTimeout(() => {
+        if (flipCard) flipCard.classList.add('revealed');
+        if (typeof playCollectibleSound === 'function') playCollectibleSound();
+        spawnConfetti(20);
+    }, 700);
+
+    // Auto close after 4s
+    clearTimeout(modal._closeTimer);
+    modal._closeTimer = setTimeout(() => closeCollectibleReveal(), 4000);
+}
+
+function closeCollectibleReveal() {
+    const modal = document.getElementById('collectibleRevealModal');
+    if (modal) {
+        modal.style.display = 'none';
+        clearTimeout(modal._closeTimer);
+    }
+    renderCollectibles();
 }
 
 function addRewards({ xp = 0, points = 0, stars = 0 } = {}) {
@@ -647,6 +722,8 @@ function generateQuestion() {
     const previousPanel = document.getElementById('previousPanel');
     if (previousPanel) previousPanel.style.display = 'none';
     selectedOption = null;
+    const prevQBtn = document.getElementById('prevQBtn');
+    if (prevQBtn) prevQBtn.style.display = questionHistory.length === 0 ? 'none' : 'inline-flex';
     updateProgress();
     startTimerIfNeeded();
     updateHelperText('');
@@ -734,6 +811,8 @@ function saveCurrentAnswer() {
         streak++;
         if (streak > maxStreak) maxStreak = streak;
 
+        if (typeof playCorrectSound === 'function') playCorrectSound();
+
         const basePoints = 10;
         const streakBonus = streak >= 10 ? 20 : streak >= 5 ? 10 : streak >= 3 ? 5 : 0;
         const modeBonus = quizMode === 'challenge' ? 5 : 0;
@@ -745,11 +824,11 @@ function saveCurrentAnswer() {
         }
         if (rewardResult.chestsOpened > 0) {
             rewardBits.push(`🎁 x${rewardResult.chestsOpened}`);
-            spawnConfetti(20);
+            spawnConfetti(30);
         }
         if (rewardResult.leveledUp) {
             rewardBits.push(`Level ${rewardState.level}!`);
-            spawnConfetti(28);
+            showLevelUpCelebration(rewardState.level);
         }
         const unlocked = [];
         if (rewardResult.chestsOpened > 0) {
@@ -761,11 +840,25 @@ function saveCurrentAnswer() {
         if (unlocked.length > 0) {
             const extra = unlocked.length > 1 ? ` +${unlocked.length - 1}` : '';
             rewardBits.push(`New Buddy: ${unlocked[0].name}${extra}`);
+            setTimeout(() => showCollectibleReveal(unlocked[0]), rewardResult.leveledUp ? 2200 : 400);
         }
         showRewardToast(rewardBits.join(' • '));
         spawnRewardBurst(rewardBits[0]);
+
+        // Streak milestone feedback
+        if (streak === 3) {
+            setTimeout(() => spawnRewardBurst('🔥 3 in a row!'), 300);
+            if (typeof playStreakSound === 'function') playStreakSound();
+        } else if (streak === 5) {
+            setTimeout(() => spawnRewardBurst('🔥🔥 5 in a row!'), 300);
+            if (typeof playStreakSound === 'function') playStreakSound();
+        } else if (streak === 10) {
+            setTimeout(() => spawnRewardBurst('🔥🔥🔥 10 in a row!'), 300);
+            if (typeof playStreakSound === 'function') playStreakSound();
+        }
     } else {
         streak = 0;
+        if (typeof playWrongSound === 'function') playWrongSound();
     }
     document.getElementById('streak').textContent = `Streak: ${streak}`;
     animateAnswer(isCorrect);

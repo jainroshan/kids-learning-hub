@@ -203,7 +203,6 @@
                 <button class="back-btn" onclick="goHome()">← Home</button>
                 <button class="change-topic-btn" onclick="changeTopic()">Change Topic</button>
                 <button class="change-subject-btn" onclick="changeSubject()">Change Subject</button>
-                <button class="change-topic-btn" onclick="togglePreviousQuestion()">Previous Question</button>
             </div>
             <div class="progress-row">
                 <div>
@@ -250,10 +249,43 @@
             </div>
             
             <div id="answerSection"></div>
+            <div class="answer-nav-row">
+                <button id="prevQBtn" class="prev-q-btn" onclick="togglePreviousQuestion()" style="display:none;">◀ Previous</button>
+            </div>
             <div class="feedback" id="feedback"></div>
         </div>
     </div>
 
+    <!-- Level-up celebration overlay -->
+    <div id="levelUpOverlay" class="levelup-overlay" style="display:none;">
+        <div class="levelup-content">
+            <div class="levelup-stars">⭐ ⭐ ⭐</div>
+            <div class="levelup-label">LEVEL UP!</div>
+            <div id="levelUpNumber" class="levelup-number">2</div>
+            <div class="levelup-sub">Amazing work! Keep going!</div>
+        </div>
+    </div>
+
+    <!-- Collectible reveal modal -->
+    <div id="collectibleRevealModal" class="collectible-modal" style="display:none;" onclick="closeCollectibleReveal()">
+        <div class="collectible-modal-inner">
+            <div class="collectible-modal-title">New Buddy Unlocked!</div>
+            <div class="collectible-card-flip" id="collectibleFlipCard">
+                <div class="flip-front">
+                    <div class="flip-emoji">❔</div>
+                    <div class="flip-label">Mystery Buddy</div>
+                </div>
+                <div class="flip-back">
+                    <div class="flip-emoji" id="revealEmoji">🦋</div>
+                    <div class="flip-name" id="revealName">Mystic Moth</div>
+                    <div class="flip-rarity" id="revealRarity">Legendary</div>
+                </div>
+            </div>
+            <div class="collectible-modal-hint">Tap anywhere to close</div>
+        </div>
+    </div>
+
+    <script src="sounds.js"></script>
     <script src="app.js"></script>
     <script src="math.js"></script>
     <script src="english.js"></script>
