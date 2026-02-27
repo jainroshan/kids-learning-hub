@@ -780,6 +780,13 @@ function generateQuestion() {
 }
 
 function saveCurrentAnswer() {
+    // Snapshot state before scoring so we can undo if user goes back
+    const scoreBefore = score;
+    const streakBefore = streak;
+    const questionHTML = document.getElementById('question').innerHTML;
+    const answerSectionHTML = document.getElementById('answerSection').innerHTML;
+    const isMultipleChoice = !!selectedOption;
+
     // Get user's answer
     let userAnswer = selectedOption || document.getElementById('answer')?.value.trim();
     const questionText = document.getElementById('question').textContent || document.getElementById('question').innerText;
@@ -864,14 +871,20 @@ function saveCurrentAnswer() {
     animateAnswer(isCorrect);
     speakFeedback(isCorrect);
     
-    // Save to history
+    // Save to history (include enough state to undo and re-render)
     questionHistory.push({
         question: questionText,
+        questionHTML,
+        answerSectionHTML,
+        isMultipleChoice,
         userAnswer: userAnswer,
         correctAnswer: currentAnswer || 'N/A',
         isCorrect: isCorrect,
         subject: currentSubject,
-        topic: currentTopic
+        topic: currentTopic,
+        questionMeta: window.currentQuestionMeta,
+        scoreBefore,
+        streakBefore
     });
     
     console.log('Current score:', score, 'History length:', questionHistory.length);
@@ -1268,27 +1281,52 @@ function startTimerIfNeeded() {
     }, 1000);
 }
 
-function togglePreviousQuestion() {
-    const panel = document.getElementById('previousPanel');
-    if (!panel) return;
-    if (panel.style.display === 'block') {
-        panel.style.display = 'none';
-        return;
+function goToPreviousQuestion() {
+    if (questionHistory.length === 0) return;
+    stopTimer();
+
+    const prev = questionHistory.pop();
+
+    // Restore score/streak/counter to before that answer was submitted
+    score = prev.scoreBefore;
+    streak = prev.streakBefore;
+    questionCount--;
+    currentAnswer = prev.correctAnswer;
+    currentSubject = prev.subject;
+    currentTopic = prev.topic;
+    window.currentQuestionMeta = prev.questionMeta;
+    selectedOption = null;
+
+    // Re-render question and answer section from stored HTML
+    document.getElementById('question').innerHTML = prev.questionHTML;
+    document.getElementById('answerSection').innerHTML = prev.answerSectionHTML;
+    document.getElementById('feedback').innerHTML = '';
+    document.getElementById('helperText').textContent = '';
+    const previousPanel = document.getElementById('previousPanel');
+    if (previousPanel) previousPanel.style.display = 'none';
+
+    // Pre-fill the user's previous answer
+    if (prev.isMultipleChoice) {
+        document.querySelectorAll('.option-btn').forEach(btn => {
+            if (btn.textContent.trim() === prev.userAnswer) {
+                btn.classList.add('selected');
+                selectedOption = prev.userAnswer;
+            }
+        });
+    } else {
+        const input = document.getElementById('answer');
+        if (input && prev.userAnswer !== 'No answer') input.value = prev.userAnswer;
     }
-    const last = questionHistory[questionHistory.length - 1];
-    if (!last) {
-        panel.innerHTML = `<div class="prev-title">Previous Question</div>
-            <div class="prev-meta">No previous question yet.</div>`;
-        panel.style.display = 'block';
-        return;
-    }
-    panel.innerHTML = `
-        <div class="prev-title">Previous Question</div>
-        <div>${last.question}</div>
-        <div class="prev-meta">Your answer: <strong>${last.userAnswer}</strong></div>
-        <div class="prev-meta">Correct answer: <strong>${last.correctAnswer}</strong></div>
-    `;
-    panel.style.display = 'block';
+
+    // Update all UI displays
+    updateProgress();
+    document.getElementById('score').textContent = `Score: ${score}/${totalQuestions}`;
+    document.getElementById('streak').textContent = `Streak: ${streak}`;
+    const prevQBtn = document.getElementById('prevQBtn');
+    if (prevQBtn) prevQBtn.style.display = questionHistory.length === 0 ? 'none' : 'inline-flex';
+
+    // Restart timer if in challenge mode
+    startTimerIfNeeded();
 }
 
 function stopTimer() {
