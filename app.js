@@ -783,6 +783,7 @@ function saveCurrentAnswer() {
     // Snapshot state before scoring so we can undo if user goes back
     const scoreBefore = score;
     const streakBefore = streak;
+    const rewardStateBefore = JSON.parse(JSON.stringify(rewardState || loadRewards()));
     const questionHTML = document.getElementById('question').innerHTML;
     const answerSectionHTML = document.getElementById('answerSection').innerHTML;
     const isMultipleChoice = !!selectedOption;
@@ -868,6 +869,7 @@ function saveCurrentAnswer() {
         if (typeof playWrongSound === 'function') playWrongSound();
     }
     document.getElementById('streak').textContent = `Streak: ${streak}`;
+    document.getElementById('score').textContent = `Score: ${score}/${totalQuestions}`;
     animateAnswer(isCorrect);
     speakFeedback(isCorrect);
     
@@ -884,7 +886,8 @@ function saveCurrentAnswer() {
         topic: currentTopic,
         questionMeta: window.currentQuestionMeta,
         scoreBefore,
-        streakBefore
+        streakBefore,
+        rewardStateBefore
     });
     
     console.log('Current score:', score, 'History length:', questionHistory.length);
@@ -1287,9 +1290,13 @@ function goToPreviousQuestion() {
 
     const prev = questionHistory.pop();
 
-    // Restore score/streak/counter to before that answer was submitted
+    // Restore score/streak/rewards/counter to before that answer was submitted
     score = prev.scoreBefore;
     streak = prev.streakBefore;
+    if (prev.rewardStateBefore) {
+        saveRewards(prev.rewardStateBefore);
+        updateRewardUI();
+    }
     questionCount--;
     currentAnswer = prev.correctAnswer;
     currentSubject = prev.subject;
