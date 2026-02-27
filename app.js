@@ -27,6 +27,7 @@ let currentStepList = [];
 let currentStepIndex = 0;
 let visualAidVisible = true;
 let scratchVisible = true;
+let isReAnswer = false; // true when re-answering a question navigated back to
 const digitControl = document.getElementById('digitControl');
 const learnResume = document.getElementById('learnResume');
 const badgeShelf = document.getElementById('badgeShelf');
@@ -783,7 +784,6 @@ function saveCurrentAnswer() {
     // Snapshot state before scoring so we can undo if user goes back
     const scoreBefore = score;
     const streakBefore = streak;
-    const rewardStateBefore = JSON.parse(JSON.stringify(rewardState || loadRewards()));
     const questionHTML = document.getElementById('question').innerHTML;
     const answerSectionHTML = document.getElementById('answerSection').innerHTML;
     const isMultipleChoice = !!selectedOption;
@@ -821,53 +821,56 @@ function saveCurrentAnswer() {
 
         if (typeof playCorrectSound === 'function') playCorrectSound();
 
-        const basePoints = 10;
-        const streakBonus = streak >= 10 ? 20 : streak >= 5 ? 10 : streak >= 3 ? 5 : 0;
-        const modeBonus = quizMode === 'challenge' ? 5 : 0;
-        const gain = basePoints + streakBonus + modeBonus;
-        const rewardResult = addRewards({ xp: gain, points: gain });
-        const rewardBits = [`+${gain} coins`];
-        if (rewardResult.starsGained > 0) {
-            rewardBits.push(`+${rewardResult.starsGained} gem${rewardResult.starsGained > 1 ? 's' : ''}`);
-        }
-        if (rewardResult.chestsOpened > 0) {
-            rewardBits.push(`🎁 x${rewardResult.chestsOpened}`);
-            spawnConfetti(30);
-        }
-        if (rewardResult.leveledUp) {
-            rewardBits.push(`Level ${rewardState.level}!`);
-            showLevelUpCelebration(rewardState.level);
-        }
-        const unlocked = [];
-        if (rewardResult.chestsOpened > 0) {
-            unlocked.push(...unlockCollectibles(rewardResult.chestsOpened));
-        }
-        if (rewardResult.leveledUp) {
-            unlocked.push(...unlockCollectibles(1));
-        }
-        if (unlocked.length > 0) {
-            const extra = unlocked.length > 1 ? ` +${unlocked.length - 1}` : '';
-            rewardBits.push(`New Buddy: ${unlocked[0].name}${extra}`);
-            setTimeout(() => showCollectibleReveal(unlocked[0]), rewardResult.leveledUp ? 2200 : 400);
-        }
-        showRewardToast(rewardBits.join(' • '));
-        spawnRewardBurst(rewardBits[0]);
+        if (!isReAnswer) {
+            const basePoints = 10;
+            const streakBonus = streak >= 10 ? 20 : streak >= 5 ? 10 : streak >= 3 ? 5 : 0;
+            const modeBonus = quizMode === 'challenge' ? 5 : 0;
+            const gain = basePoints + streakBonus + modeBonus;
+            const rewardResult = addRewards({ xp: gain, points: gain });
+            const rewardBits = [`+${gain} coins`];
+            if (rewardResult.starsGained > 0) {
+                rewardBits.push(`+${rewardResult.starsGained} gem${rewardResult.starsGained > 1 ? 's' : ''}`);
+            }
+            if (rewardResult.chestsOpened > 0) {
+                rewardBits.push(`🎁 x${rewardResult.chestsOpened}`);
+                spawnConfetti(30);
+            }
+            if (rewardResult.leveledUp) {
+                rewardBits.push(`Level ${rewardState.level}!`);
+                showLevelUpCelebration(rewardState.level);
+            }
+            const unlocked = [];
+            if (rewardResult.chestsOpened > 0) {
+                unlocked.push(...unlockCollectibles(rewardResult.chestsOpened));
+            }
+            if (rewardResult.leveledUp) {
+                unlocked.push(...unlockCollectibles(1));
+            }
+            if (unlocked.length > 0) {
+                const extra = unlocked.length > 1 ? ` +${unlocked.length - 1}` : '';
+                rewardBits.push(`New Buddy: ${unlocked[0].name}${extra}`);
+                setTimeout(() => showCollectibleReveal(unlocked[0]), rewardResult.leveledUp ? 2200 : 400);
+            }
+            showRewardToast(rewardBits.join(' • '));
+            spawnRewardBurst(rewardBits[0]);
 
-        // Streak milestone feedback
-        if (streak === 3) {
-            setTimeout(() => spawnRewardBurst('🔥 3 in a row!'), 300);
-            if (typeof playStreakSound === 'function') playStreakSound();
-        } else if (streak === 5) {
-            setTimeout(() => spawnRewardBurst('🔥🔥 5 in a row!'), 300);
-            if (typeof playStreakSound === 'function') playStreakSound();
-        } else if (streak === 10) {
-            setTimeout(() => spawnRewardBurst('🔥🔥🔥 10 in a row!'), 300);
-            if (typeof playStreakSound === 'function') playStreakSound();
+            // Streak milestone feedback
+            if (streak === 3) {
+                setTimeout(() => spawnRewardBurst('🔥 3 in a row!'), 300);
+                if (typeof playStreakSound === 'function') playStreakSound();
+            } else if (streak === 5) {
+                setTimeout(() => spawnRewardBurst('🔥🔥 5 in a row!'), 300);
+                if (typeof playStreakSound === 'function') playStreakSound();
+            } else if (streak === 10) {
+                setTimeout(() => spawnRewardBurst('🔥🔥🔥 10 in a row!'), 300);
+                if (typeof playStreakSound === 'function') playStreakSound();
+            }
         }
     } else {
         streak = 0;
         if (typeof playWrongSound === 'function') playWrongSound();
     }
+    isReAnswer = false; // reset after use
     document.getElementById('streak').textContent = `Streak: ${streak}`;
     document.getElementById('score').textContent = `Score: ${score}/${totalQuestions}`;
     animateAnswer(isCorrect);
@@ -886,8 +889,7 @@ function saveCurrentAnswer() {
         topic: currentTopic,
         questionMeta: window.currentQuestionMeta,
         scoreBefore,
-        streakBefore,
-        rewardStateBefore
+        streakBefore
     });
     
     console.log('Current score:', score, 'History length:', questionHistory.length);
@@ -1290,14 +1292,12 @@ function goToPreviousQuestion() {
 
     const prev = questionHistory.pop();
 
-    // Restore score/streak/rewards/counter to before that answer was submitted
+    // Restore score/streak/counter to before that answer was submitted
+    // Rewards are NOT restored — re-answering a previous question skips reward logic
     score = prev.scoreBefore;
     streak = prev.streakBefore;
-    if (prev.rewardStateBefore) {
-        saveRewards(prev.rewardStateBefore);
-        updateRewardUI();
-    }
     questionCount--;
+    isReAnswer = true;
     currentAnswer = prev.correctAnswer;
     currentSubject = prev.subject;
     currentTopic = prev.topic;
