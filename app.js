@@ -30,6 +30,31 @@ let scratchVisible = true;
 const digitControl = document.getElementById('digitControl');
 const learnResume = document.getElementById('learnResume');
 const badgeShelf = document.getElementById('badgeShelf');
+const rewardBar = document.getElementById('rewardBar');
+const rewardToast = document.getElementById('rewardToast');
+const levelFill = document.getElementById('levelFill');
+const levelTitle = document.getElementById('levelTitle');
+const levelMeta = document.getElementById('levelMeta');
+const pointCount = document.getElementById('pointCount');
+const starCount = document.getElementById('starCount');
+const chestCount = document.getElementById('chestCount');
+const collectibleShelf = document.getElementById('collectibleShelf');
+const collectibleGrid = document.getElementById('collectibleGrid');
+let rewardState = null;
+const collectiblePool = [
+    { id: 'block-buddy', name: 'Block Buddy', emoji: '🧱', rarity: 'Common' },
+    { id: 'star-hopper', name: 'Star Hopper', emoji: '⭐', rarity: 'Common' },
+    { id: 'cave-cub', name: 'Cave Cub', emoji: '🐾', rarity: 'Common' },
+    { id: 'sky-sprout', name: 'Sky Sprout', emoji: '🌱', rarity: 'Common' },
+    { id: 'pixel-puffer', name: 'Pixel Puffer', emoji: '🐡', rarity: 'Rare' },
+    { id: 'gem-golem', name: 'Gem Golem', emoji: '💎', rarity: 'Rare' },
+    { id: 'river-ripple', name: 'River Ripple', emoji: '💧', rarity: 'Rare' },
+    { id: 'mushroom-sprite', name: 'Mushroom Sprite', emoji: '🍄', rarity: 'Rare' },
+    { id: 'lava-lizard', name: 'Lava Lizard', emoji: '🦎', rarity: 'Epic' },
+    { id: 'cloud-nibbler', name: 'Cloud Nibbler', emoji: '☁️', rarity: 'Epic' },
+    { id: 'forest-fox', name: 'Forest Fox', emoji: '🦊', rarity: 'Epic' },
+    { id: 'mystic-moth', name: 'Mystic Moth', emoji: '🦋', rarity: 'Legendary' }
+];
 
 function getGradeDigitCap(grade) {
     if (grade <= 1) return 1;
@@ -180,6 +205,192 @@ function applyGradeDefaults() {
         difficultySelect.value = recommended;
     }
     updateDigitOptionsForGrade();
+}
+
+function getXpGoal(level) {
+    return 100 + Math.max(0, level - 1) * 25;
+}
+
+function loadRewards() {
+    const raw = localStorage.getItem('rewardState');
+    if (!raw) {
+        return {
+            points: 0,
+            stars: 0,
+            level: 1,
+            xp: 0,
+            chest: 0,
+            chestProgress: 0,
+            starProgress: 0
+        };
+    }
+    try {
+        const parsed = JSON.parse(raw);
+        return {
+            points: parsed.points || 0,
+            stars: parsed.stars || 0,
+            level: parsed.level || 1,
+            xp: parsed.xp || 0,
+            chest: parsed.chest || 0,
+            chestProgress: parsed.chestProgress || 0,
+            starProgress: parsed.starProgress || 0
+        };
+    } catch {
+        return {
+            points: 0,
+            stars: 0,
+            level: 1,
+            xp: 0,
+            chest: 0,
+            chestProgress: 0,
+            starProgress: 0
+        };
+    }
+}
+
+function saveRewards(state) {
+    rewardState = state;
+    localStorage.setItem('rewardState', JSON.stringify(state));
+}
+
+function updateRewardUI() {
+    if (!rewardBar) return;
+    if (!rewardState) rewardState = loadRewards();
+    const goal = getXpGoal(rewardState.level);
+    const pct = Math.min(100, Math.round((rewardState.xp / goal) * 100));
+    if (levelFill) levelFill.style.width = `${pct}%`;
+    if (levelTitle) levelTitle.textContent = `Level ${rewardState.level}`;
+    if (levelMeta) levelMeta.textContent = `${rewardState.xp} / ${goal} XP`;
+    if (pointCount) pointCount.textContent = rewardState.points;
+    if (starCount) starCount.textContent = rewardState.stars;
+    if (chestCount) chestCount.textContent = rewardState.chest;
+}
+
+function showRewardToast(text) {
+    if (!rewardToast) return;
+    rewardToast.textContent = text;
+    rewardToast.classList.add('show');
+    clearTimeout(rewardToast._timer);
+    rewardToast._timer = setTimeout(() => rewardToast.classList.remove('show'), 1400);
+}
+
+function spawnRewardBurst(text) {
+    const burst = document.createElement('div');
+    burst.className = 'reward-burst';
+    burst.textContent = text;
+    document.body.appendChild(burst);
+    setTimeout(() => burst.remove(), 900);
+}
+
+function spawnConfetti(count = 18) {
+    const colors = ['#ff6b6b', '#ffd43b', '#74c0fc', '#63e6be', '#b197fc'];
+    for (let i = 0; i < count; i += 1) {
+        const piece = document.createElement('div');
+        piece.className = 'confetti-piece';
+        piece.style.left = `${Math.random() * 100}%`;
+        piece.style.background = colors[i % colors.length];
+        piece.style.animationDelay = `${Math.random() * 0.2}s`;
+        piece.style.transform = `rotate(${Math.random() * 360}deg)`;
+        document.body.appendChild(piece);
+        piece.addEventListener('animationend', () => piece.remove());
+    }
+}
+
+function addRewards({ xp = 0, points = 0, stars = 0 } = {}) {
+    if (!rewardState) rewardState = loadRewards();
+    const state = { ...rewardState };
+    let leveledUp = false;
+    let chestsOpened = 0;
+    let starsGained = 0;
+
+    state.points += points;
+    state.xp += xp;
+    state.starProgress += 1;
+
+    if (stars > 0) {
+        state.stars += stars;
+    }
+
+    if (state.starProgress >= 5) {
+        const extra = Math.floor(state.starProgress / 5);
+        state.starProgress -= extra * 5;
+        state.stars += extra;
+        starsGained += extra;
+    }
+
+    state.chestProgress += xp;
+    if (state.chestProgress >= 100) {
+        const opened = Math.floor(state.chestProgress / 100);
+        state.chestProgress -= opened * 100;
+        state.chest += opened;
+        chestsOpened = opened;
+    }
+
+    let goal = getXpGoal(state.level);
+    while (state.xp >= goal) {
+        state.xp -= goal;
+        state.level += 1;
+        leveledUp = true;
+        goal = getXpGoal(state.level);
+    }
+
+    saveRewards(state);
+    updateRewardUI();
+
+    return { leveledUp, chestsOpened, starsGained };
+}
+
+function loadCollectibles() {
+    const raw = localStorage.getItem('collectibles');
+    if (!raw) return [];
+    try {
+        const parsed = JSON.parse(raw);
+        return Array.isArray(parsed) ? parsed : [];
+    } catch {
+        return [];
+    }
+}
+
+function saveCollectibles(list) {
+    localStorage.setItem('collectibles', JSON.stringify(list));
+}
+
+function renderCollectibles() {
+    if (!collectibleShelf || !collectibleGrid) return;
+    const owned = loadCollectibles();
+    const hasAny = owned.length > 0;
+    collectibleShelf.style.display = hasAny ? 'block' : 'none';
+    if (!hasAny) {
+        collectibleGrid.innerHTML = '';
+        return;
+    }
+    collectibleGrid.innerHTML = collectiblePool.map(item => {
+        const isOwned = owned.includes(item.id);
+        return `
+            <div class="collectible-card ${isOwned ? '' : 'locked'}">
+                <div class="collectible-emoji">${isOwned ? item.emoji : '❔'}</div>
+                <div class="collectible-name">${isOwned ? item.name : 'Mystery Buddy'}</div>
+                <div class="collectible-rarity">${isOwned ? item.rarity : 'Locked'}</div>
+            </div>
+        `;
+    }).join('');
+}
+
+function unlockCollectibles(count = 1) {
+    if (count <= 0) return [];
+    const owned = loadCollectibles();
+    const available = collectiblePool.filter(item => !owned.includes(item.id));
+    if (available.length === 0) return [];
+    const unlocked = [];
+    for (let i = 0; i < count && available.length > 0; i += 1) {
+        const index = Math.floor(Math.random() * available.length);
+        const pick = available.splice(index, 1)[0];
+        owned.push(pick.id);
+        unlocked.push(pick);
+    }
+    saveCollectibles(owned);
+    renderCollectibles();
+    return unlocked;
 }
 
 function startSubject(subject) {
@@ -520,6 +731,37 @@ function saveCurrentAnswer() {
         score++;
         streak++;
         if (streak > maxStreak) maxStreak = streak;
+
+        const basePoints = 10;
+        const streakBonus = streak >= 10 ? 20 : streak >= 5 ? 10 : streak >= 3 ? 5 : 0;
+        const modeBonus = quizMode === 'challenge' ? 5 : 0;
+        const gain = basePoints + streakBonus + modeBonus;
+        const rewardResult = addRewards({ xp: gain, points: gain });
+        const rewardBits = [`+${gain} coins`];
+        if (rewardResult.starsGained > 0) {
+            rewardBits.push(`+${rewardResult.starsGained} gem${rewardResult.starsGained > 1 ? 's' : ''}`);
+        }
+        if (rewardResult.chestsOpened > 0) {
+            rewardBits.push(`🎁 x${rewardResult.chestsOpened}`);
+            spawnConfetti(20);
+        }
+        if (rewardResult.leveledUp) {
+            rewardBits.push(`Level ${rewardState.level}!`);
+            spawnConfetti(28);
+        }
+        const unlocked = [];
+        if (rewardResult.chestsOpened > 0) {
+            unlocked.push(...unlockCollectibles(rewardResult.chestsOpened));
+        }
+        if (rewardResult.leveledUp) {
+            unlocked.push(...unlockCollectibles(1));
+        }
+        if (unlocked.length > 0) {
+            const extra = unlocked.length > 1 ? ` +${unlocked.length - 1}` : '';
+            rewardBits.push(`New Buddy: ${unlocked[0].name}${extra}`);
+        }
+        showRewardToast(rewardBits.join(' • '));
+        spawnRewardBurst(rewardBits[0]);
     } else {
         streak = 0;
     }
@@ -801,7 +1043,32 @@ function showResults() {
     
     const percentage = totalQuestions > 0 ? Math.round((score / totalQuestions) * 100) : 0;
     const mistakes = questionHistory.filter(item => !item.isCorrect);
-    const newlyUnlocked = unlockBadges(score, totalQuestions);
+    let bonusLine = '';
+
+    if (score === totalQuestions && totalQuestions > 0) {
+        const bonus = 50;
+        const rewardResult = addRewards({ xp: bonus, points: bonus, stars: 1 });
+        spawnConfetti(26);
+        const bonusBits = [`Perfect Bonus +${bonus} coins`, '+1 gem'];
+        const unlocked = [];
+        if (rewardResult.chestsOpened > 0) {
+            unlocked.push(...unlockCollectibles(rewardResult.chestsOpened));
+            bonusBits.push(`🎁 x${rewardResult.chestsOpened}`);
+        }
+        if (rewardResult.leveledUp) {
+            spawnConfetti(30);
+            unlocked.push(...unlockCollectibles(1));
+            bonusBits.push(`Level ${rewardState.level}!`);
+        }
+        if (unlocked.length > 0) {
+            const extra = unlocked.length > 1 ? ` +${unlocked.length - 1}` : '';
+            bonusBits.push(`New Buddy: ${unlocked[0].name}${extra}`);
+        }
+        showRewardToast(bonusBits.join(' • '));
+        bonusLine = `<div style="margin-top:10px; font-weight:600; color:#c27912;">Perfect Bonus: +${bonus} coins & +1 gem!</div>`;
+    }
+
+    const newlyUnlocked = unlockBadges(score, totalQuestions, rewardState);
     
     q.innerHTML = `🎉 Quiz Complete! 🎉`;
     
@@ -834,6 +1101,10 @@ function showResults() {
         reviewHTML += `</div></div>`;
     }
     
+    if (bonusLine) {
+        reviewHTML += bonusLine;
+    }
+
     const primaryAction = isQuickStart
         ? `<button class="next-btn" onclick="startQuickStart()">Try Again</button>`
         : `<button class="next-btn" onclick="startTopic('${currentTopic}')">Try Again</button>`;
@@ -1143,7 +1414,7 @@ function saveBadges(badges) {
     localStorage.setItem('badges', JSON.stringify(badges));
 }
 
-function unlockBadges(scoreVal, total) {
+function unlockBadges(scoreVal, total, rewards) {
     const earned = getBadges();
     const newly = [];
     const maybeAdd = (badge, condition) => {
@@ -1154,9 +1425,16 @@ function unlockBadges(scoreVal, total) {
     };
     maybeAdd('Hot Streak x5', maxStreak >= 5);
     maybeAdd('Hot Streak x10', maxStreak >= 10);
+    maybeAdd('Hot Streak x15', maxStreak >= 15);
     maybeAdd('10 Correct', scoreVal >= 10);
     maybeAdd('25 Correct', scoreVal >= 25);
     maybeAdd('Perfect Score', scoreVal === total && total > 0);
+    const rewardData = rewards || loadRewards();
+    maybeAdd('Level 3', rewardData.level >= 3);
+    maybeAdd('Level 5', rewardData.level >= 5);
+    maybeAdd('Star Collector', rewardData.stars >= 10);
+    maybeAdd('Treasure Hunter', rewardData.chest >= 1);
+    maybeAdd('Coin Pile 500', rewardData.points >= 500);
     if (newly.length > 0) saveBadges(earned);
     return newly;
 }
@@ -1191,6 +1469,9 @@ window.addEventListener('load', initScratchPad);
 setDigitVisibility(false);
 applyGradeDefaults();
 renderBadgeShelf();
+rewardState = loadRewards();
+updateRewardUI();
+renderCollectibles();
 setBackVisible(false);
 const savedVisual = localStorage.getItem('visualAidVisible');
 const savedScratch = localStorage.getItem('scratchVisible');

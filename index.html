@@ -17,6 +17,31 @@
             <h1>Kids Learning Hub</h1>
             <p class="hero-subtitle">Pick a subject, choose a topic, and start a quick practice session.</p>
         </header>
+
+        <section id="rewardBar" class="reward-bar">
+            <div class="reward-chip level-chip">
+                <div class="chip-title" id="levelTitle">Level 1</div>
+                <div class="level-bar">
+                    <div id="levelFill" class="level-fill"></div>
+                </div>
+                <div class="chip-sub" id="levelMeta">0 / 100 XP</div>
+            </div>
+            <div class="reward-chip">
+                <span class="chip-emoji">✨</span>
+                <span class="chip-value" id="starCount">0</span>
+                <span class="chip-label">Gems</span>
+            </div>
+            <div class="reward-chip">
+                <span class="chip-emoji">💎</span>
+                <span class="chip-value" id="pointCount">0</span>
+                <span class="chip-label">Coins</span>
+            </div>
+            <div class="reward-chip">
+                <span class="chip-emoji">🎁</span>
+                <span class="chip-value" id="chestCount">0</span>
+                <span class="chip-label">Loot</span>
+            </div>
+        </section>
         
         <section class="controls" id="controls" style="display:none;">
             <div class="control-group">
@@ -111,6 +136,14 @@
         </div>
         
         <div id="badgeShelf" class="badge-shelf" style="display:none;"></div>
+        <div id="rewardToast" class="reward-toast" aria-live="polite"></div>
+        <section id="collectibleShelf" class="collectible-shelf" style="display:none;">
+            <div class="collectible-header">
+                <h2>Collectibles</h2>
+                <div class="collectible-subtitle">Earn mystery buddies by completing challenges.</div>
+            </div>
+            <div id="collectibleGrid" class="collectible-grid"></div>
+        </section>
 
         <div id="mathOptions" class="topic-options">
             <div class="section-header">
