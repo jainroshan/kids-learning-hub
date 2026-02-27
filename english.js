@@ -39,13 +39,52 @@ function generateEnglishQuestion() {
             `<button class="option-btn" onclick="selectOption('${opt}')">${opt}</button>`
         ).join('') + '</div><button class="next-btn" onclick="checkAnswer()">Next Question</button>';
     } else if (currentTopic === 'spelling') {
-        const words = ['cat', 'dog', 'sun', 'tree', 'book', 'house', 'water', 'happy', 'friend', 'school', 
-                       'apple', 'table', 'chair', 'pencil', 'paper', 'window', 'door', 'flower', 'garden', 'family'];
-        const word = words[Math.floor(Math.random() * words.length)];
-        q.textContent = `Spell the word: "${word}"`;
-        currentAnswer = word;
-        window.currentQuestionMeta = { subject: 'english', topic: currentTopic, word };
-        a.innerHTML = '<input type="text" class="answer-input" id="answer"><br><button class="next-btn" onclick="checkAnswer()">Next Question</button>';
+        const spellingBank = [
+            { correct: 'cat', wrong: ['kat', 'cta', 'caat'] },
+            { correct: 'dog', wrong: ['doog', 'gdo', 'dgo'] },
+            { correct: 'sun', wrong: ['sunn', 'snu', 'son'] },
+            { correct: 'tree', wrong: ['tre', 'tere', 'tire'] },
+            { correct: 'book', wrong: ['bok', 'boook', 'boko'] },
+            { correct: 'house', wrong: ['hause', 'houes', 'hosue'] },
+            { correct: 'water', wrong: ['watre', 'watar', 'waetr'] },
+            { correct: 'happy', wrong: ['hapy', 'haapy', 'happie'] },
+            { correct: 'friend', wrong: ['freind', 'frend', 'firend'] },
+            { correct: 'school', wrong: ['scool', 'schol', 'shcool'] },
+            { correct: 'apple', wrong: ['aple', 'appel', 'appple'] },
+            { correct: 'table', wrong: ['tabel', 'taable', 'tabble'] },
+            { correct: 'chair', wrong: ['chiar', 'chare', 'chaer'] },
+            { correct: 'pencil', wrong: ['pencel', 'pencill', 'penncil'] },
+            { correct: 'paper', wrong: ['papper', 'paer', 'papre'] },
+            { correct: 'window', wrong: ['windoe', 'widnow', 'windaw'] },
+            { correct: 'door', wrong: ['dor', 'dooor', 'doar'] },
+            { correct: 'flower', wrong: ['flour', 'flowre', 'flwer'] },
+            { correct: 'garden', wrong: ['gardan', 'gardin', 'garrden'] },
+            { correct: 'family', wrong: ['famly', 'famliy', 'fammily'] }
+        ];
+
+        function mutateWord(word) {
+            if (word.length < 3) return word + word[word.length - 1];
+            const i = Math.floor(Math.random() * (word.length - 1));
+            const swapped = word.split('');
+            [swapped[i], swapped[i + 1]] = [swapped[i + 1], swapped[i]];
+            return swapped.join('');
+        }
+
+        const item = spellingBank[Math.floor(Math.random() * spellingBank.length)];
+        const options = [item.correct];
+        item.wrong.forEach(w => options.push(w));
+        while (options.length < 4) {
+            const candidate = mutateWord(item.correct);
+            if (!options.includes(candidate)) options.push(candidate);
+        }
+        const shuffled = shuffleArray(options.slice(0, 4));
+
+        q.textContent = 'Which word is spelled correctly?';
+        currentAnswer = item.correct;
+        window.currentQuestionMeta = { subject: 'english', topic: currentTopic, item };
+        a.innerHTML = '<div class="options">' + shuffled.map(opt => 
+            `<button class="option-btn" onclick="selectOption('${opt}')">${opt}</button>`
+        ).join('') + '</div><button class="next-btn" onclick="checkAnswer()">Next Question</button>';
     } else {
     let questions = englishQuestions[currentTopic];
     if (!questions || questions.length === 0) {
