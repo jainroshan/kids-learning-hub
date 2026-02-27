@@ -644,6 +644,8 @@ function generateQuestion() {
     
     questionCount++;
     document.getElementById('feedback').innerHTML = '';
+    const previousPanel = document.getElementById('previousPanel');
+    if (previousPanel) previousPanel.style.display = 'none';
     selectedOption = null;
     updateProgress();
     startTimerIfNeeded();
@@ -1171,6 +1173,29 @@ function startTimerIfNeeded() {
             generateQuestion();
         }
     }, 1000);
+}
+
+function togglePreviousQuestion() {
+    const panel = document.getElementById('previousPanel');
+    if (!panel) return;
+    if (panel.style.display === 'block') {
+        panel.style.display = 'none';
+        return;
+    }
+    const last = questionHistory[questionHistory.length - 1];
+    if (!last) {
+        panel.innerHTML = `<div class="prev-title">Previous Question</div>
+            <div class="prev-meta">No previous question yet.</div>`;
+        panel.style.display = 'block';
+        return;
+    }
+    panel.innerHTML = `
+        <div class="prev-title">Previous Question</div>
+        <div>${last.question}</div>
+        <div class="prev-meta">Your answer: <strong>${last.userAnswer}</strong></div>
+        <div class="prev-meta">Correct answer: <strong>${last.correctAnswer}</strong></div>
+    `;
+    panel.style.display = 'block';
 }
 
 function stopTimer() {

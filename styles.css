@@ -1173,6 +1173,31 @@ h2 {
     min-height: 24px;
 }
 
+.previous-panel {
+    margin: 10px auto 0;
+    max-width: 560px;
+    padding: 12px 14px;
+    border-radius: 12px;
+    background: #fff7e6;
+    border: 1px solid #f1d6aa;
+    color: #5a3b10;
+    font-size: 0.95rem;
+    line-height: 1.4;
+    text-align: left;
+    box-shadow: 0 10px 24px rgba(31, 37, 68, 0.08);
+}
+
+.previous-panel .prev-title {
+    font-weight: 700;
+    margin-bottom: 6px;
+}
+
+.previous-panel .prev-meta {
+    color: #7a5a2c;
+    font-size: 0.9rem;
+    margin-top: 4px;
+}
+
 .step-chip {
     display: inline-flex;
     padding: 4px 8px;
